@@ -16,6 +16,15 @@ namespace CleanLiving.GameEngine.Tests
         }
 
         [UnitTest]
+        public void WhenSchedulerProvidedThenSubscribesForTicks()
+        {
+            var scheduler = new Mock<IScheduler>();
+            var engine = new Engine(scheduler.Object);
+
+            scheduler.Verify(m => m.Subscribe(engine), Times.Once);
+        }
+
+        [UnitTest]
         public void WhenSubscribedForNotificationOneTickFromNowThenReceivesNotification()
         {
             var scheduler = new Fake.Scheduler();

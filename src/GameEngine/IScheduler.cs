@@ -1,6 +1,6 @@
-﻿namespace CleanLiving.GameEngine
+﻿using System;
+
+namespace CleanLiving.GameEngine
 {
-    public interface IScheduler
-    {
-    }
+    public interface IScheduler : IObservable<GameTick> { }
 }

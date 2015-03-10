@@ -14,5 +14,10 @@ namespace CleanLiving.GameEngine
             if (config.Options.GameTicksPerSecond <= 0)
                 throw new InvalidSchedulerConfigurationException(nameof(config.Options.GameTicksPerSecond));
         }
+
+        public IDisposable Subscribe(IObserver<GameTick> observer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
