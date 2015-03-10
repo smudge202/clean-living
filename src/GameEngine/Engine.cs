@@ -7,7 +7,8 @@ namespace CleanLiving.GameEngine
     {
         public Engine(IOptions<EngineConfiguration> config)
         {
-            throw new ArgumentNullException();
+            if (config == null) throw new ArgumentNullException();
+            if (config.Options == null) throw new EngineConfigurationException();
         }
     }
 }
