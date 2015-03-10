@@ -3,7 +3,7 @@ using System;
 
 namespace CleanLiving.GameEngine
 {
-    public class Engine
+    public class Engine : IObservable<GameTick>
     {
         public Engine(IOptions<EngineConfiguration> config)
         {
@@ -13,6 +13,12 @@ namespace CleanLiving.GameEngine
                 throw new EngineConfigurationException();
             if (config.Options.GameTicksPerSecond <= 0)
                 throw new InvalidEngineConfigurationException(nameof(config.Options.GameTicksPerSecond));
+        }
+
+        public IDisposable Subscribe(IObserver<GameTick> observer)
+        {
+            observer.OnNext(new GameTick());
+            return null;
         }
     }
 }

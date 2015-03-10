@@ -8,14 +8,14 @@ namespace CleanLiving.GameEngine.Tests
 {
     public class EngineTests
     {
-        [Fact]
+        [UnitTest]
         public void WhenConfigurationNotProvidedThenThrowsException()
         {
             Action act = () => new Engine(null);
             act.ShouldThrow<ArgumentNullException>();
         }
 
-        [Fact]
+        [UnitTest]
         public void WhenOptionsNotSuppliedThenThrowsException()
         {
             var config = new Mock<IOptions<EngineConfiguration>>();
@@ -24,27 +24,44 @@ namespace CleanLiving.GameEngine.Tests
             act.ShouldThrow<EngineConfigurationException>();
         }
 
-        [Fact]
+        [UnitTest]
         public void WhenGameTicksPerSecondIsNegativeThenThrowsException()
         {
             SetupEngineWithGameTicksPerSecondSetTo(-1)
                 .ShouldThrow<InvalidEngineConfigurationException>();
         }
 
-        [Fact]
+        [UnitTest]
         public void WhenGameTicksPerSecondIsZeroThenThrowsException()
         {
             SetupEngineWithGameTicksPerSecondSetTo(0)
                 .ShouldThrow<InvalidEngineConfigurationException>();
         }
 
-        private Action SetupEngineWithGameTicksPerSecondSetTo(int gameTicksPerSecond)
+        [ComponentTest]
+        public void WhenSubscribedForNotificationOneTickFromNowThenReceivesNotification()
+        {
+            var config = SetupConfig(100);
+            var engine = new Engine(config);
+            var observer = new Fakes.GameTickObserver();
+
+            using (var subscription = engine.Subscribe(observer))
+                observer.OnNextCalled.Wait(200).Should().BeTrue();
+        }
+
+        private IOptions<EngineConfiguration> SetupConfig(int gameTicksPerSecond)
         {
             var config = new Mock<IOptions<EngineConfiguration>>();
             config.SetupGet(m => m.Options).Returns(
                 new EngineConfiguration { GameTicksPerSecond = gameTicksPerSecond }
             );
-            return () => new Engine(config.Object);
+            return config.Object;
+        }
+
+        private Action SetupEngineWithGameTicksPerSecondSetTo(int gameTicksPerSecond)
+        {
+            var config = SetupConfig(gameTicksPerSecond);
+            return () => new Engine(config);
         }
     }
 }

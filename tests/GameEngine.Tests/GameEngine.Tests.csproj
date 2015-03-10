@@ -26,7 +26,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ENABLE_COMPONENT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -91,7 +91,9 @@
   <ItemGroup>
     <Compile Include="ActorTests.cs" />
     <Compile Include="EngineTests.cs" />
+    <Compile Include="Fakes\GameTickObserver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\GameEngine\GameEngine.csproj">
