@@ -40,7 +40,7 @@ Twitch: http://www.twitch.tv/herecydev
 
 I'm Matt, dev ops guy.
 
-Twitch: http://www.twitch.tv/herecydev
+Twitch: http://www.twitch.tv/mattridgway
 
 ---------
 
