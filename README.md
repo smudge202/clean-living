@@ -38,9 +38,10 @@ Twitch: http://www.twitch.tv/herecydev
 
 **Matt Ridgway**
 
-I'm Matt, dev ops guy.
+I'm Matt, by day i'm a development manager and no longer get to write any code, so i like to make up for it by contributing to projects like this.
 
 Twitch: http://www.twitch.tv/mattridgway
+Twitter: https://twitter.com/Matt_Ridgway
 
 ---------
 
@@ -52,11 +53,11 @@ Our only condition is that Pull-Requests follow the same agile clean-code format
 
 ## Contact Us
 
-We welcome any feedback and hate mail - [Tommy] feeds on your rage!  The team can be contacted through our group e-mail address:
+The team can be contacted through our group e-mail address:
 
 clean.living.devs@gmail.com
 
-We also invite you to create issues and comment on our existing issues, especially if you would like for us to prioritise certain work over others because it is of interest to you.
+Feel free to send any feedback or hate mail - [Tommy] feeds on your rage! We also invite you to create issues and comment on our existing issues, especially if you would like for us to prioritise certain work over others because it is of interest to you.
 
   [clean code]: http://www.amazon.co.uk/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882
   [agile]: http://en.wikipedia.org/wiki/Agile_software_development
