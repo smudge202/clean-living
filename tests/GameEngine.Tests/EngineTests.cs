@@ -15,17 +15,36 @@ namespace CleanLiving.GameEngine.Tests
             act.ShouldThrow<ArgumentNullException>();
         }
 
-        [ComponentTest]
+        [UnitTest]
         public void WhenSubscribedForNotificationOneTickFromNowThenReceivesNotification()
         {
             var scheduler = new Fake.Scheduler();
-            var engine = new Engine(scheduler);
             var observer = new Mock<IObserver<GameTick>>();
-            using (var subscription = engine.Subscribe(observer.Object))
+            using (var subscription = SubscribeToEngine(scheduler, observer.Object))
             {
                 scheduler.Tick();
                 observer.Verify(m => m.OnNext(It.IsAny<GameTick>()), Times.Once);
             }                
+        }
+
+        [Theory(Skip ="Need to ensure Engine subscribes to Scheduler")]
+        [InlineData(2), InlineData(5), InlineData(10)]
+        public void WhenSubscribedForTicksThenReceivesCorrectNumberOfNotications(int tickCount)
+        {
+            var scheduler = new Fake.Scheduler();
+            var observer = new Mock<IObserver<GameTick>>();
+            using (var subscription = SubscribeToEngine(scheduler, observer.Object))
+            {
+                for (var i = 0; i < tickCount; i++)
+                    scheduler.Tick();
+                observer.Verify(m => m.OnNext(It.IsAny<GameTick>()), Times.Exactly(tickCount));
+            }
+        }
+
+        private IDisposable SubscribeToEngine(IScheduler scheduler, IObserver<GameTick> observer)
+        {
+            var engine = new Engine(scheduler);
+            return engine.Subscribe(observer);
         }
     }
 }
