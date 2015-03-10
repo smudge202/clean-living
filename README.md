@@ -28,9 +28,9 @@ Twitch: http://www.twitch.tv/smudge202
 
 ---------
 
-**Dan Kirkhan**
+**Dan Kirkhan (herecydev)**
 
-I'm Dan...
+I'm Dan, junior developer; pro gamer.
 
 Twitch: http://www.twitch.tv/herecydev
 
@@ -38,7 +38,7 @@ Twitch: http://www.twitch.tv/herecydev
 
 **Matt Ridgway**
 
-I'm Matt...
+I'm Matt, dev ops guy.
 
 Twitch: http://www.twitch.tv/herecydev
 
