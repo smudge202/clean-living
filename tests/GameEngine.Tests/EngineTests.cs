@@ -25,12 +25,26 @@ namespace CleanLiving.GameEngine.Tests
         }
 
         [Fact]
-        public void WhenGameTicksIsNegativeThenThrowsException()
+        public void WhenGameTicksPerSecondIsNegativeThenThrowsException()
+        {
+            SetupEngineWithGameTicksPerSecondSetTo(-1)
+                .ShouldThrow<InvalidEngineConfigurationException>();
+        }
+
+        [Fact]
+        public void WhenGameTicksPerSecondIsZeroThenThrowsException()
+        {
+            SetupEngineWithGameTicksPerSecondSetTo(0)
+                .ShouldThrow<InvalidEngineConfigurationException>();
+        }
+
+        private Action SetupEngineWithGameTicksPerSecondSetTo(int gameTicksPerSecond)
         {
             var config = new Mock<IOptions<EngineConfiguration>>();
-            config.SetupGet(m => m.Options).Returns(new EngineConfiguration { GameTicksPerSecond = -1 });
-            Action act = () => new Engine(config.Object);
-            act.ShouldThrow<InvalidEngineConfigurationException>();
+            config.SetupGet(m => m.Options).Returns(
+                new EngineConfiguration { GameTicksPerSecond = gameTicksPerSecond }
+            );
+            return () => new Engine(config.Object);
         }
     }
 }

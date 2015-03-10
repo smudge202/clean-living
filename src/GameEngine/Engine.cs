@@ -11,7 +11,7 @@ namespace CleanLiving.GameEngine
                 throw new ArgumentNullException();
             if (config.Options == null)
                 throw new EngineConfigurationException();
-            if (config.Options.GameTicksPerSecond < 0)
+            if (config.Options.GameTicksPerSecond <= 0)
                 throw new InvalidEngineConfigurationException(nameof(config.Options.GameTicksPerSecond));
         }
     }
