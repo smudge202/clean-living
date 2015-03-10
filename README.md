@@ -33,3 +33,4 @@ We also invite you to create issues and comment on our existing issues, especial
   [design patterns]: http://www.oodesign.com
   [SOLID principles]: http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29
   [SCRUM]: http://en.wikipedia.org/wiki/Scrum_%28software_development%29
+  [Tommy]: https://github.com/Smudge202
