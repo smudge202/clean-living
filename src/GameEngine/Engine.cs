@@ -4,6 +4,8 @@ namespace CleanLiving.GameEngine
 {
     public class Engine : IObservable<GameTick>, IObserver<GameTick>
     {
+        private IObserver<GameTick> _observer;
+
         public Engine(IScheduler scheduler)
         {
             if (scheduler == null)
@@ -13,7 +15,7 @@ namespace CleanLiving.GameEngine
 
         public void OnNext(GameTick value)
         {
-            throw new NotImplementedException();
+            _observer.OnNext(new GameTick());
         }
 
         public void OnCompleted()
@@ -28,7 +30,7 @@ namespace CleanLiving.GameEngine
 
         public IDisposable Subscribe(IObserver<GameTick> observer)
         {
-            observer.OnNext(new GameTick());
+            _observer = observer;
             return null;
         }
     }

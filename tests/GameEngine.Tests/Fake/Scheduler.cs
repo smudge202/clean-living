@@ -4,8 +4,17 @@ namespace CleanLiving.GameEngine.Tests.Fake
 {
     internal sealed class Scheduler : IScheduler
     {
-        internal void Tick() { }
+        private IObserver<GameTick> _observer;
 
-        public IDisposable Subscribe(IObserver<GameTick> observer) { return null; }
+        internal void Tick()
+        {
+            _observer.OnNext(new GameTick());
+        }
+
+        public IDisposable Subscribe(IObserver<GameTick> observer)
+        {
+            _observer = observer;
+            return null;
+        }
     }
 }

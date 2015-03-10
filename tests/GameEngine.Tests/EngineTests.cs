@@ -36,7 +36,7 @@ namespace CleanLiving.GameEngine.Tests
             }                
         }
 
-        [Theory(Skip ="Need to ensure Engine subscribes to Scheduler")]
+        [Theory]
         [InlineData(2), InlineData(5), InlineData(10)]
         public void WhenSubscribedForTicksThenReceivesCorrectNumberOfNotications(int tickCount)
         {
