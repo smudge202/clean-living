@@ -1,6 +1,6 @@
 ﻿namespace CleanLiving.GameEngine
 {
-    public class EngineConfiguration
+    public class SchedulerConfiguration
     {
         public int GameTicksPerSecond { get; set; }
     }

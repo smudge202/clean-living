@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace CleanLiving.GameEngine.Tests.Fakes
+namespace CleanLiving.GameEngine.Tests.Fake
 {
     internal sealed class GameTickObserver : IObserver<GameTick>
     {

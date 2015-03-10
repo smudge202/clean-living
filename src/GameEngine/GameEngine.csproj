@@ -53,10 +53,12 @@
   <ItemGroup>
     <Compile Include="Actor.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="EngineConfiguration.cs" />
-    <Compile Include="EngineConfigurationException.cs" />
+    <Compile Include="IScheduler.cs" />
+    <Compile Include="Scheduler.cs" />
+    <Compile Include="SchedulerConfiguration.cs" />
+    <Compile Include="SchedulerConfigurationException.cs" />
     <Compile Include="GameTick.cs" />
-    <Compile Include="InvalidEngineConfigurationException.cs" />
+    <Compile Include="InvalidSchedulerConfigurationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

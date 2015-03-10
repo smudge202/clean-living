@@ -91,8 +91,10 @@
   <ItemGroup>
     <Compile Include="ActorTests.cs" />
     <Compile Include="EngineTests.cs" />
-    <Compile Include="Fakes\GameTickObserver.cs" />
+    <Compile Include="Fake\GameTickObserver.cs" />
+    <Compile Include="Fake\Scheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SchedulerTests.cs" />
     <Compile Include="TestAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
