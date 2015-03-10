@@ -55,6 +55,7 @@
     <Compile Include="Engine.cs" />
     <Compile Include="EngineConfiguration.cs" />
     <Compile Include="EngineConfigurationException.cs" />
+    <Compile Include="InvalidEngineConfigurationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

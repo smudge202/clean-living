@@ -23,5 +23,14 @@ namespace CleanLiving.GameEngine.Tests
             Action act = () => new Engine(config.Object);
             act.ShouldThrow<EngineConfigurationException>();
         }
+
+        [Fact]
+        public void WhenGameTicksIsNegativeThenThrowsException()
+        {
+            var config = new Mock<IOptions<EngineConfiguration>>();
+            config.SetupGet(m => m.Options).Returns(new EngineConfiguration { GameTicksPerSecond = -1 });
+            Action act = () => new Engine(config.Object);
+            act.ShouldThrow<InvalidEngineConfigurationException>();
+        }
     }
 }
