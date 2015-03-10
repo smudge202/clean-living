@@ -16,7 +16,7 @@ We'll be taking questions and feedback, where possible helping to put developers
 
 ## Collaborators
 
-In no particular order, these are the current project collaborators, a little bit of information on them, and where to watch them stream!
+In no particular order, these are the current project collaborators, a little bit of information about each, and where to watch them stream!
 
 ---------
 
