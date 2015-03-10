@@ -14,6 +14,36 @@ All collaborators on this project are strong advocates of [clean code] and [agil
 
 We'll be taking questions and feedback, where possible helping to put developers new to these concepts on the right track.
 
+## Collaborators
+
+In no particular order, these are the current project collaborators, a little bit of information on them, and where to watch them stream!
+
+---------
+
+**Tommy Long (Smudge202)**
+
+I'm a Senior Software Developer and avid gamer with experience in commercial development since before I had any grey hair.
+
+Twitch: http://www.twitch.tv/smudge202
+
+---------
+
+**Dan Kirkhan**
+
+I'm Dan...
+
+Twitch: http://www.twitch.tv/herecydev
+
+---------
+
+**Matt Ridgway**
+
+I'm Matt...
+
+Twitch: http://www.twitch.tv/herecydev
+
+---------
+
 ## Contributions
 
 The initial collborators all know one another offline, but we're by no means a closed net group. We remain open to suggestions and pull-request contributions to the project.
