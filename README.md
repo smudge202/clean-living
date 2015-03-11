@@ -25,6 +25,7 @@ In no particular order, these are the current project collaborators, a little bi
 I'm a Senior Software Developer and avid gamer with experience in commercial development since before I had any grey hair.
 
 Twitch: http://www.twitch.tv/smudge202
+Twitter: https://twitter.com/Smudge202
 
 ---------
 
