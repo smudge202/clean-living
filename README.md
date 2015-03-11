@@ -62,7 +62,7 @@ clean.living.devs@gmail.com
 
 Feel free to send any feedback or hate mail - [Tommy] feeds on your rage! We also invite you to create issues and comment on our existing issues, especially if you would like for us to prioritise certain work over others because it is of interest to you.
 
-  [issues page]: https://github.com/Smudge202/clean-living/issues
+  [issues page]: https://waffle.io/smudge202/clean-living
   [clean code]: http://www.amazon.co.uk/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882
   [agile]: http://en.wikipedia.org/wiki/Agile_software_development
   [design patterns]: http://www.oodesign.com
