@@ -4,9 +4,11 @@ Walking a mile in the shoes of a game developer.
 
 ## Description
 
-_Clean Living_ is another drop in the pool that is the survival game genre.  The difference between this game and others is that our end-goal is not to publish the game and become overnight millionaires (though if you want to send us millions, let me know!).
+_Clean Living_ is another drop in the pool that is the survival game genre. The difference between this game and others is that our end-goal is not to publish the game and become overnight millionaires (though if you want to send us millions, let me know!).
 
 Instead, our emphasis is on having fun and learning. In particular, we're not aiming for just collaborators and contributors to learn from this project, we intend for our group of software professionals to stream the majority of the game's development, demonstrating and putting into practice our broad range of industry leading practices, experience and knowledge.
+
+As a result, there won't always be clear direction on what features will or will not be present in the game, as we'll be taking feedback and suggestions, implementing anything that sounds challenging or interesting.  You can get a feel for what's currently under developement by checking out the [issues page]!
 
 ## What to expect
 
@@ -60,6 +62,7 @@ clean.living.devs@gmail.com
 
 Feel free to send any feedback or hate mail - [Tommy] feeds on your rage! We also invite you to create issues and comment on our existing issues, especially if you would like for us to prioritise certain work over others because it is of interest to you.
 
+  [issues page]: https://github.com/Smudge202/clean-living/issues
   [clean code]: http://www.amazon.co.uk/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882
   [agile]: http://en.wikipedia.org/wiki/Agile_software_development
   [design patterns]: http://www.oodesign.com
