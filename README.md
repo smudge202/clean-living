@@ -1,5 +1,7 @@
 # Clean Living
 
+[![Build status](https://ci.appveyor.com/api/projects/status/2wwrvmewlqjrdvkq/branch/dev?svg=true)](https://ci.appveyor.com/project/Smudge202/clean-living/branch/dev)
+
 Walking a mile in the shoes of a game developer.
 
 ## Description
