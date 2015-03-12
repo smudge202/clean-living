@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameTime.cs" />
+    <Compile Include="IClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateEngine.cs" />
   </ItemGroup>
