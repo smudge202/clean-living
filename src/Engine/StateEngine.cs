@@ -15,14 +15,13 @@ namespace CleanLiving.Engine
             _clock = clock;
         }
 
-        public object Subscribe(IObserver<GameTime> observer, GameTime time)
+        public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
         {
             if (_subscriptions.ContainsKey(time))
                 _subscriptions[time].Add(observer);
             else
                 _subscriptions.Add(time, new List<IObserver<GameTime>>() { observer });
-            _clock.Subscribe(this, time);
-            return new object();
+            return _clock.Subscribe(this, time);
         }
 
         public void OnNext(GameTime value)

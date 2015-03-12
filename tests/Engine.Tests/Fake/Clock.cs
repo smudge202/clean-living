@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Moq;
+using System;
 
 namespace CleanLiving.Engine.Tests.Fake
 {
@@ -6,10 +7,10 @@ namespace CleanLiving.Engine.Tests.Fake
     {
         private IObserver<GameTime> _observer;
 
-        public object Subscribe(IObserver<GameTime> observer, GameTime time)
+        public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
         {
             _observer = observer;
-            return new object();
+            return new Mock<IDisposable>().Object;
         }
 
         internal void Publish(GameTime time)

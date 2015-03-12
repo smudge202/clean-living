@@ -18,7 +18,9 @@ namespace CleanLiving.Engine.Tests
         [UnitTest]
         public void WhenSubscribesForGameTimeThenReceivesSubscription()
         {
-            new StateEngine(new Mock<IClock>().Object).Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
+            var clock = new Mock<IClock>();
+            clock.Setup(m => m.Subscribe(It.IsAny<IObserver<GameTime>>(), It.IsAny<GameTime>())).Returns(new Mock<IDisposable>().Object);
+            new StateEngine(clock.Object).Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
                 .Should().NotBeNull();
         }
 
@@ -62,6 +64,17 @@ namespace CleanLiving.Engine.Tests
 
             foreach (var testCase in testCases)
                 testCase.Subscriber.Verify(m => m.OnNext(testCase.Time), Times.Once());
+        }
+
+        [UnitTest]
+        public void WhenSubscriptionIsDisposedThenEngineShouldDisposeClockSubscription()
+        {
+            var clock = new Mock<IClock>();
+            var clockSubscription = new Mock<IDisposable>();
+            clock.Setup(m => m.Subscribe(It.IsAny<IObserver<GameTime>>(), It.IsAny<GameTime>())).Returns(clockSubscription.Object);
+            using (var subscription = new StateEngine(clock.Object).Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))) { }
+
+            clockSubscription.Verify(m => m.Dispose(), Times.Once);
         }
     }
 }

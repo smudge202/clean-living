@@ -4,6 +4,6 @@ namespace CleanLiving.Engine
 {
     public interface IClock
     {
-        object Subscribe(IObserver<GameTime> observer, GameTime time);
+        IDisposable Subscribe(IObserver<GameTime> observer, GameTime time);
     }
 }
