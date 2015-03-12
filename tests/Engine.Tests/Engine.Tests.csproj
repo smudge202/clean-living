@@ -76,6 +76,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Fake\Clock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateEngineTests.cs" />
     <Compile Include="TestAttributes.cs" />

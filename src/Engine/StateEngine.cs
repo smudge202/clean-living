@@ -2,9 +2,10 @@
 
 namespace CleanLiving.Engine
 {
-    public class StateEngine
+    public class StateEngine : IObserver<GameTime>
     {
         private readonly IClock _clock;
+        private IObserver<GameTime> _observer;
 
         public StateEngine(IClock clock)
         {
@@ -12,10 +13,26 @@ namespace CleanLiving.Engine
             _clock = clock;
         }
 
-        public object Subscribe(GameTime time)
+        public object Subscribe(IObserver<GameTime> observer, GameTime time)
         {
-            _clock.Subscribe(time);
+            _observer = observer;
+            _clock.Subscribe(this, time);
             return new object();
+        }
+
+        public void OnNext(GameTime value)
+        {
+            _observer.OnNext(value);
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
         }
     }
 }
