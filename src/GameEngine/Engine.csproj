@@ -7,8 +7,8 @@
     <ProjectGuid>{AC2CC3BF-42B5-42A4-BB33-AEF4FA5F5081}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CleanLiving.GameEngine</RootNamespace>
-    <AssemblyName>CleanLiving.GameEngine</AssemblyName>
+    <RootNamespace>CleanLiving.Engine</RootNamespace>
+    <AssemblyName>CleanLiving.Engine</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

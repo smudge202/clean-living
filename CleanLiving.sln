@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22609.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine", "src\GameEngine\GameEngine.csproj", "{AC2CC3BF-42B5-42A4-BB33-AEF4FA5F5081}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "src\GameEngine\Engine.csproj", "{AC2CC3BF-42B5-42A4-BB33-AEF4FA5F5081}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A7B6F52-1572-4AA7-8ED7-6257F2F274A8}"
 EndProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine.Tests", "tests\GameEngine.Tests\GameEngine.Tests.csproj", "{105E0DCC-F70B-4CFB-9A87-8BD9294704F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.Tests", "tests\GameEngine.Tests\Engine.Tests.csproj", "{105E0DCC-F70B-4CFB-9A87-8BD9294704F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

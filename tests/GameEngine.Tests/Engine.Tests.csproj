@@ -9,8 +9,8 @@
     <ProjectGuid>{105E0DCC-F70B-4CFB-9A87-8BD9294704F3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CleanLiving.GameEngine.Tests</RootNamespace>
-    <AssemblyName>CleanLiving.GameEngine.Tests</AssemblyName>
+    <RootNamespace>CleanLiving.Engine.Tests</RootNamespace>
+    <AssemblyName>CleanLiving.Engine.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -80,9 +80,9 @@
     <Compile Include="TestAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\GameEngine\GameEngine.csproj">
+    <ProjectReference Include="..\..\src\GameEngine\Engine.csproj">
       <Project>{ac2cc3bf-42b5-42a4-bb33-aef4fa5f5081}</Project>
-      <Name>GameEngine</Name>
+      <Name>Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

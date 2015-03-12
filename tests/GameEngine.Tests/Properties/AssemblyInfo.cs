@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-[assembly: AssemblyTitle("CleanLiving.GameEngine.Tests")]
+[assembly: AssemblyTitle("CleanLiving.Engine.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CleanLiving.GameEngine.Tests")]
+[assembly: AssemblyProduct("CleanLiving.Engine.Tests")]
 [assembly: AssemblyCopyright("Copyright © 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
