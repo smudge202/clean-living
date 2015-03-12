@@ -80,7 +80,7 @@
     <Compile Include="TestAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\GameEngine\Engine.csproj">
+    <ProjectReference Include="..\..\src\Engine\Engine.csproj">
       <Project>{ac2cc3bf-42b5-42a4-bb33-aef4fa5f5081}</Project>
       <Name>Engine</Name>
     </ProjectReference>
