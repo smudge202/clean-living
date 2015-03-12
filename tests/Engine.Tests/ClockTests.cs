@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using System;
-using Xunit;
 
 namespace CleanLiving.Engine.Tests
 {
@@ -17,7 +16,21 @@ namespace CleanLiving.Engine.Tests
         Decision (for now):  Option 2, but add option 3 if it becomes a problem.
         */
 
-        [Fact]
+        [UnitTest]
+        public void WhenSubscribeWithoutObserverThenThrowsException()
+        {
+            Action act = () => new Clock().Subscribe(null, GameTime.Now.Add(1));
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
+        public void WhenSubscribeWithoutGameTimeThenThrowsException()
+        {
+            Action act = () => new Clock().Subscribe(new Mock<IObserver<GameTime>>().Object, null);
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
         public void WhenSubscribeThenReturnsSubscription()
         {
             new Clock().Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))

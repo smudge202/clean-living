@@ -16,6 +16,20 @@ namespace CleanLiving.Engine.Tests
         }
 
         [UnitTest]
+        public void WhenSubscribeWithoutObserverThenThrowsException()
+        {
+            Action act = () => new StateEngine(new Mock<IClock>().Object).Subscribe(null, GameTime.Now.Add(1));
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
+        public void WhenSubscribeWithoutGameTimeThenThrowsException()
+        {
+            Action act = () => new StateEngine(new Mock<IClock>().Object).Subscribe(new Mock<IObserver<GameTime>>().Object, null);
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
         public void WhenSubscribesForGameTimeThenReceivesSubscription()
         {
             var clock = new Mock<IClock>();

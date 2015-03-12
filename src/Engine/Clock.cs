@@ -6,6 +6,8 @@ namespace CleanLiving.Engine
     {
         public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
         {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
+            if (time == null) throw new ArgumentNullException(nameof(time));
             return new ClockSubscription();
         }
     }

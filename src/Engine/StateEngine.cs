@@ -17,6 +17,7 @@ namespace CleanLiving.Engine
 
         public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
         {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
             if (_subscriptions.ContainsKey(time))
                 _subscriptions[time].Add(observer);
             else
