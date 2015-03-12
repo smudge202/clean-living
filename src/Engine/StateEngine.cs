@@ -4,11 +4,18 @@ namespace CleanLiving.Engine
 {
     public class StateEngine
     {
-        public StateEngine(object x)
+        private readonly IClock _clock;
+
+        public StateEngine(IClock clock)
         {
-            if (x == null) throw new ArgumentNullException(nameof(x));
+            if (clock == null) throw new ArgumentNullException(nameof(clock));
+            _clock = clock;
         }
 
-        public object Subscribe(object x) { return new object(); }
+        public object Subscribe(GameTime time)
+        {
+            _clock.Subscribe(time);
+            return new object();
+        }
     }
 }

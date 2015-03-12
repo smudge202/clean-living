@@ -1,4 +1,7 @@
 ﻿namespace CleanLiving.Engine
 {
-    public interface IClock { }
+    public interface IClock
+    {
+        object Subscribe(GameTime time);
+    }
 }

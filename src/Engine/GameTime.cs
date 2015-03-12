@@ -4,6 +4,6 @@
     {
         public static GameTime Now { get; } = new GameTime();
 
-        public object Add(int x) { return new object(); }
+        public GameTime Add(int x) { return new GameTime(); }
     }
 }
