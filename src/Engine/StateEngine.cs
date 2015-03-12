@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CleanLiving.Engine
 {
     public class StateEngine : IObserver<GameTime>
     {
         private readonly IClock _clock;
-        private IObserver<GameTime> _observer;
+        private Dictionary<GameTime, List<IObserver<GameTime>>> _subscriptions =
+            new Dictionary<GameTime, List<IObserver<GameTime>>>();
 
         public StateEngine(IClock clock)
         {
@@ -15,14 +17,18 @@ namespace CleanLiving.Engine
 
         public object Subscribe(IObserver<GameTime> observer, GameTime time)
         {
-            _observer = observer;
+            if (_subscriptions.ContainsKey(time))
+                _subscriptions[time].Add(observer);
+            else
+                _subscriptions.Add(time, new List<IObserver<GameTime>>() { observer });
             _clock.Subscribe(this, time);
             return new object();
         }
 
         public void OnNext(GameTime value)
         {
-            _observer.OnNext(value);
+            foreach (var subscriber in _subscriptions[value])
+                subscriber.OnNext(value);
         }
 
         public void OnCompleted()

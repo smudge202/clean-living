@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CleanLiving.GameEngine.Tests
+namespace CleanLiving.Engine.Tests
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class UnitTestAttribute : Xunit.FactAttribute { }
