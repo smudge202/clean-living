@@ -17,23 +17,30 @@ namespace CleanLiving.Engine.Tests
         */
 
         [UnitTest]
+        public void WhenCallbackServiceNotProviderTHenThrowsException()
+        {
+            Action act = () => new Clock(null);
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
         public void WhenSubscribeWithoutObserverThenThrowsException()
         {
-            Action act = () => new Clock().Subscribe(null, GameTime.Now.Add(1));
+            Action act = () => new Clock(new Mock<IScheduler>().Object).Subscribe(null, GameTime.Now.Add(1));
             act.ShouldThrow<ArgumentNullException>();
         }
 
         [UnitTest]
         public void WhenSubscribeWithoutGameTimeThenThrowsException()
         {
-            Action act = () => new Clock().Subscribe(new Mock<IObserver<GameTime>>().Object, null);
+            Action act = () => new Clock(new Mock<IScheduler>().Object).Subscribe(new Mock<IObserver<GameTime>>().Object, null);
             act.ShouldThrow<ArgumentNullException>();
         }
 
         [UnitTest]
         public void WhenSubscribeThenReturnsSubscription()
         {
-            new Clock().Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
+            new Clock(new Mock<IScheduler>().Object).Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
                 .Should().NotBeNull();
         }
     }
