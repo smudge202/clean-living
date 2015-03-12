@@ -18,7 +18,7 @@ namespace CleanLiving.Engine.Tests
         */
 
         [Fact]
-        public void WhenSubscribeThenReturnsSubscripption()
+        public void WhenSubscribeThenReturnsSubscription()
         {
             new Clock().Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
                 .Should().NotBeNull();
