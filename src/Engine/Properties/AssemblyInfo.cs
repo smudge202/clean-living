@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CleanLiving.Engine")]
 [assembly: AssemblyDescription("")]
@@ -12,3 +13,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("ac2cc3bf-42b5-42a4-bb33-aef4fa5f5081")]
 [assembly: AssemblyVersion("0.0.1.0")]
 [assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: InternalsVisibleTo("CleanLiving.Engine.Tests")]

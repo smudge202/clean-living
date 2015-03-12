@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CleanLiving.Engine
 {
-    public class StateEngine : IObserver<GameTime>
+    public class StateEngine : IEngine, IObserver<GameTime>
     {
         private readonly IClock _clock;
         private Dictionary<GameTime, List<IObserver<GameTime>>> _subscriptions =
