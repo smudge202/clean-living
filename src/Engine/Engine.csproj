@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Clock.cs" />
     <Compile Include="ClockSubscription.cs" />
+    <Compile Include="GameSubscription.cs" />
     <Compile Include="GameTime.cs" />
     <Compile Include="IClock.cs" />
     <Compile Include="IEngine.cs" />

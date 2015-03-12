@@ -61,6 +61,19 @@ namespace CleanLiving.Engine.Tests
             subscriber.Verify(m => m.OnNext(time), Times.Once);
         }
 
+        [UnitTest]
+        public void WhenSubscriptionFullfilledThenDisposesClockSubscription()
+        {
+            var clock = new Fake.Clock();
+            var time = GameTime.Now.Add(1);
+            var subscription = new Mock<IDisposable>();
+            clock.SubscribeReturns(subscription.Object);
+            new StateEngine(clock).Subscribe(new Mock<IObserver<GameTime>>().Object, time);
+            clock.Publish(time);
+
+            subscription.Verify(m => m.Dispose(), Times.Once);
+        }
+
         [Theory]
         [InlineData(1), InlineData(2), InlineData(5)]
         public void WhenSubscriptionsExistForDifferentTimesThenEnginePassesNotificationsToCorrectSubscribers(int numOfSubscribers)

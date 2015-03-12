@@ -7,10 +7,16 @@ namespace CleanLiving.Engine.Tests.Fake
     {
         private IObserver<GameTime> _observer;
 
+        private IDisposable _subscription;
+        internal void SubscribeReturns(IDisposable subscription)
+        {
+            _subscription = subscription;
+        }
+
         public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
         {
             _observer = observer;
-            return new Mock<IDisposable>().Object;
+            return _subscription ?? new Mock<IDisposable>().Object;
         }
 
         internal void Publish(GameTime time)
