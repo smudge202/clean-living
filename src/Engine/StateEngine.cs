@@ -6,6 +6,8 @@ namespace CleanLiving.Engine
     public class StateEngine : IEngine, IObserver<GameTime>
     {
         private readonly IClock _clock;
+
+        // TODO : Move to dependency if/when used subscriptions need clearing
         private Dictionary<GameTime, List<GameSubscription>> _subscriptions =
             new Dictionary<GameTime, List<GameSubscription>>();
 
