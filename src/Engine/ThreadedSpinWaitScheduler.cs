@@ -86,8 +86,16 @@ namespace CleanLiving.Engine
             var nextSubscription = elapsingSubscriptions.First();
             if (nextSubscription.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
                 return elapsingSubscriptions;
+            RescheduleSubscription(nextSubscription);
             var timeUntilNextSubscriptionDue = TimeSpan.FromMilliseconds(nextSubscription.Key - GameTime.Elapsed - _config.Options.AcceptableSpinWaitPeriodNanoseconds / 1000000);
-            _release.Wait(timeUntilNextSubscriptionDue, _scheduler.Token);
+            try
+            {
+                _release.Wait(timeUntilNextSubscriptionDue, _scheduler.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
+            }
             return WaitForNextSubscriptions();
         }
 
