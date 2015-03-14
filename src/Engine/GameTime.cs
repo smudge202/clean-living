@@ -28,7 +28,7 @@ namespace CleanLiving.Engine
                 return new GameTime(nanosecondsFromNow);
             }
 
-            public override long Value { get { return GameTime.Elapsed; } }
+            public override long Value { get { return Elapsed; } }
         }
     }
 }
