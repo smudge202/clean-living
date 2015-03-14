@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.Framework.OptionsModel;
 using Moq;
 using System;
+using Xunit;
 
 namespace CleanLiving.Engine.Tests
 {
@@ -17,31 +19,65 @@ namespace CleanLiving.Engine.Tests
         */
 
         [UnitTest]
-        public void WhenCallbackServiceNotProviderTHenThrowsException()
+        public void WhenOptionsNotProvidedThenThrowsException()
         {
-            Action act = () => new Clock(null);
+            Action act = () => new Clock(null, new Mock<IScheduler>().Object);
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
+        public void WhenSchedulerNotProviderThenThrowsException()
+        {
+            Action act = () => new Clock(new Mock<IOptions<SchedulerOptions>>().Object, null);
             act.ShouldThrow<ArgumentNullException>();
         }
 
         [UnitTest]
         public void WhenSubscribeWithoutObserverThenThrowsException()
         {
-            Action act = () => new Clock(new Mock<IScheduler>().Object).Subscribe(null, GameTime.Now.Add(1));
+            Action act = () => new Clock(new Mock<IOptions<SchedulerOptions>>().Object, new Mock<IScheduler>().Object)
+                .Subscribe(null, GameTime.Now.Add(1));
             act.ShouldThrow<ArgumentNullException>();
         }
 
         [UnitTest]
         public void WhenSubscribeWithoutGameTimeThenThrowsException()
         {
-            Action act = () => new Clock(new Mock<IScheduler>().Object).Subscribe(new Mock<IObserver<GameTime>>().Object, null);
+            Action act = () => new Clock(new Mock<IOptions<SchedulerOptions>>().Object, new Mock<IScheduler>().Object)
+                .Subscribe(new Mock<IObserver<GameTime>>().Object, null);
             act.ShouldThrow<ArgumentNullException>();
         }
 
         [UnitTest]
         public void WhenSubscribeThenReturnsSubscription()
         {
-            new Clock(new Mock<IScheduler>().Object).Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
+            new Clock(DefaultOptions, new Mock<IScheduler>().Object)
+                .Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
                 .Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData(1, 1, 1), InlineData(2, 2, 1), InlineData(5, 10, 2)]
+        public void WhenSubscribeThenRequestsCorrectRealtimeCallbackFromScheduler(int timeMultiplier, int gameTimeWait, int expectedRealWait)
+        {
+            var config = new Mock<IOptions<SchedulerOptions>>();
+            config.SetupGet(m => m.Options).Returns(new SchedulerOptions { InitialGameTimeMultiplier = timeMultiplier });
+            var scheduler = new Mock<IScheduler>();
+            var clock = new Clock(config.Object, scheduler.Object);
+
+            clock.Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Stopped().Add(gameTimeWait));
+
+            scheduler.Verify(m => m.Subscribe(clock, expectedRealWait), Times.Once);
+        }
+
+        private static IOptions<SchedulerOptions> DefaultOptions
+        {
+            get
+            {
+                var config = new Mock<IOptions<SchedulerOptions>>();
+                config.SetupGet(m => m.Options).Returns(new SchedulerOptions { InitialGameTimeMultiplier = 1m });
+                return config.Object;
+            }
         }
     }
 }

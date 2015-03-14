@@ -3,13 +3,32 @@ using System.Diagnostics;
 
 namespace CleanLiving.Engine
 {
-    [DebuggerDisplay("GameTime: Id = {Id}")]
+    [DebuggerDisplay("GameTime: {Value}")]
     public class GameTime
     {
-        private Guid Id { get; } = Guid.NewGuid();
+        private static Stopwatch _timer = Stopwatch.StartNew();
 
-        public static GameTime Now { get; } = new GameTime();
+        internal static long Elapsed { get { return _timer.ElapsedTicks; } }
 
-        public GameTime Add(int x) { return new GameTime(); }
+        public static CurrentGameTime Now { get; } = new CurrentGameTime();
+
+        private GameTime(long nanosecondsFromNow)
+        {
+            Value = Elapsed + nanosecondsFromNow;
+        }
+
+        public virtual long Value { get; private set; }
+
+        public class CurrentGameTime : GameTime
+        {
+            internal CurrentGameTime() : base(0) { }
+
+            public GameTime Add(int nanosecondsFromNow)
+            {
+                return new GameTime(nanosecondsFromNow);
+            }
+
+            public override long Value { get { return GameTime.Elapsed; } }
+        }
     }
 }
