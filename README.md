@@ -44,7 +44,7 @@ Twitch: http://www.twitch.tv/herecydev
 
 **Matt Ridgway**
 
-I'm Matt, by day i'm a development manager and no longer get to write any code, so i like to make up for it by contributing to projects like this.
+I'm Matt, by day I'm a development manager and no longer get the chance to write any code, so I like to make up for it by contributing to projects like this.
 
 Twitch: http://www.twitch.tv/mattridgway
 Twitter: https://twitter.com/Matt_Ridgway
