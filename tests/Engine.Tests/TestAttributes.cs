@@ -33,7 +33,8 @@ namespace CleanLiving.Engine.Tests
         Unknown = 0,
         UsesNetworkIO = 1,
         UsesDiskIO = 2,
-        UsesMultipleThreads = 4,
-        UsesThreadSynchronization = 8
+        UsesUnsafeClass = 4,
+        UsesMultipleThreads = 8,
+        UsesThreadSynchronization = 16
     }
 }

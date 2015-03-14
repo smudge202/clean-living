@@ -46,18 +46,7 @@ namespace CleanLiving.Engine
             while (true)
             {
                 if (_scheduler.IsCancellationRequested) break;
-                WaitForSubscriptions();
-
-                // TODO: Review for optimal enumeration pattern
-                var currentSubscriptions = GetCurrentSubscriptions();
-                var elapsedSubscriptions = currentSubscriptions
-                    .Where(x => x.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
-                    .ToList();
-                foreach (var subscription in currentSubscriptions.Except(elapsedSubscriptions))
-                    RescheduleSubscription(subscription);
-
-                var sortedElapsedSubscriptions = new SortedList<long, ConcurrentBag<SchedulerSubscription>>(elapsedSubscriptions.Count);
-                elapsedSubscriptions.ForEach(x => sortedElapsedSubscriptions.Add(x.Key, x.Value));
+                var elapsedSubscriptions = WaitForNextSubscriptions();
                 foreach (var subscription in elapsedSubscriptions)
                     WaitToPublish(subscription);
             }
@@ -80,14 +69,26 @@ namespace CleanLiving.Engine
                 observer.Publish(GameTime.Elapsed);
         }
 
-        private void WaitForSubscriptions()
+        private SortedList<long, ConcurrentBag<SchedulerSubscription>> WaitForNextSubscriptions()
         {
             _subscriptionsLock.EnterReadLock();
             var isSubscriptions = _subscriptions.Any();
             if (isSubscriptions && !_release.IsSet) _release.Set();
             else if (!isSubscriptions && _release.IsSet) _release.Reset();
             _subscriptionsLock.ExitReadLock();
-            _release.Wait(_scheduler.Token);
+
+            var elapsingSubscriptions = GetElapsingSubscriptions();
+            if (!elapsingSubscriptions.Any())
+            {
+                _release.Wait(_scheduler.Token);
+                return WaitForNextSubscriptions();
+            }
+            var nextSubscription = elapsingSubscriptions.First();
+            if (nextSubscription.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
+                return elapsingSubscriptions;
+            var timeUntilNextSubscriptionDue = TimeSpan.FromMilliseconds(nextSubscription.Key - GameTime.Elapsed - _config.Options.AcceptableSpinWaitPeriodNanoseconds / 1000000);
+            _release.Wait(timeUntilNextSubscriptionDue, _scheduler.Token);
+            return WaitForNextSubscriptions();
         }
 
         private void RescheduleSubscription(KeyValuePair<long, ConcurrentBag<SchedulerSubscription>> subscription)
@@ -95,6 +96,27 @@ namespace CleanLiving.Engine
             var scheduledSubscription = _subscriptions.GetOrAdd(subscription.Key, new ConcurrentBag<SchedulerSubscription>());
             foreach (var subscriptionObserver in subscription.Value)
                 scheduledSubscription.Add(subscriptionObserver);
+        }
+
+        private SortedList<long, ConcurrentBag<SchedulerSubscription>> GetElapsingSubscriptions()
+        {
+            var currentSubscriptions = GetCurrentSubscriptions();
+            if (!currentSubscriptions.Any()) return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
+
+            var elapsingSubscriptions = currentSubscriptions
+                .Where(x => x.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
+                .ToList();
+
+            if (!elapsingSubscriptions.Any())
+                elapsingSubscriptions = currentSubscriptions.OrderBy(x => x.Key).Take(1).ToList();
+
+            foreach (var subscription in currentSubscriptions.Except(elapsingSubscriptions))
+                RescheduleSubscription(subscription);
+
+            var sortedElapsedSubscriptions = new SortedList<long, ConcurrentBag<SchedulerSubscription>>(elapsingSubscriptions.Count);
+            elapsingSubscriptions.ForEach(x => sortedElapsedSubscriptions.Add(x.Key, x.Value));
+
+            return sortedElapsedSubscriptions;
         }
 
         private ConcurrentDictionary<long, ConcurrentBag<SchedulerSubscription>> GetCurrentSubscriptions()

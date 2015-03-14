@@ -37,5 +37,7 @@ namespace CleanLiving.Engine.Tests
             }
             observer.Verify(m => m.OnCompleted(), Times.Once);
         }
+
+
     }
 }
