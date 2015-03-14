@@ -58,8 +58,10 @@
     <Compile Include="IClock.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="IScheduler.cs" />
+    <Compile Include="PooledSpinWaitScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchedulerOptions.cs" />
+    <Compile Include="SchedulerSubscription.cs" />
     <Compile Include="StateEngine.cs" />
   </ItemGroup>
   <ItemGroup>
