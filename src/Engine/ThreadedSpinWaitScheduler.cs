@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Framework.OptionsModel;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace CleanLiving.Engine
     [Obsolete("UNSAFE CLASS! This class must not be used in debug, unit or component tests,")]
     internal class ThreadedSpinWaitScheduler : IScheduler, IDisposable
     {
+        private readonly IOptions<ThreadedSpinWaitSchedulerOptions> _config;
+
         private readonly ManualResetEventSlim _release = new ManualResetEventSlim();
         private readonly ReaderWriterLockSlim _subscriptionsLock = new ReaderWriterLockSlim();
         private readonly CancellationTokenSource _scheduler = new CancellationTokenSource();
@@ -16,10 +19,12 @@ namespace CleanLiving.Engine
         private ConcurrentDictionary<long, ConcurrentBag<SchedulerSubscription>> _subscriptions
             = new ConcurrentDictionary<long, ConcurrentBag<SchedulerSubscription>>();
 
-        public ThreadedSpinWaitScheduler()
+        public ThreadedSpinWaitScheduler(IOptions<ThreadedSpinWaitSchedulerOptions> config)
         {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            _config = config;
             var scheduler = new Thread(new ThreadStart(StartScheduler));
-            scheduler.Name = "Scheduler";
+            scheduler.Name = _config.Options.SchedulerThreadName;
             scheduler.Start();
         }
 
@@ -42,16 +47,26 @@ namespace CleanLiving.Engine
                 if (_scheduler.IsCancellationRequested) return;
                 WaitForSubscriptions();
 
+                // TODO: Review for optimal enumeration pattern
                 var currentSubscriptions = GetCurrentSubscriptions();
-                // TODO: Consider fuzzy match and spin waiting the remainder
-                var elapsedSubscriptions = currentSubscriptions.Where(x => x.Key <= GameTime.Elapsed);
+                var elapsedSubscriptions = currentSubscriptions
+                    .Where(x => x.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
+                    .ToList();
                 foreach (var subscription in currentSubscriptions.Except(elapsedSubscriptions))
                     RescheduleSubscription(subscription);
 
+                var sortedElapsedSubscriptions = new SortedList<long, ConcurrentBag<SchedulerSubscription>>(elapsedSubscriptions.Count);
+                elapsedSubscriptions.ForEach(x => sortedElapsedSubscriptions.Add(x.Key, x.Value));
                 foreach (var subscription in elapsedSubscriptions)
-                    foreach (var observer in subscription.Value)
-                        observer.Publish(GameTime.Elapsed);
+                    WaitToPublish(subscription);
             }
+        }
+
+        private void WaitToPublish(KeyValuePair<long, ConcurrentBag<SchedulerSubscription>> subscription)
+        {
+            while (GameTime.Elapsed > subscription.Key) Thread.SpinWait(_config.Options.SpinWaitIterations);
+            foreach (var observer in subscription.Value)
+                observer.Publish(GameTime.Elapsed);
         }
 
         private void WaitForSubscriptions()

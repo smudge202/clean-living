@@ -63,6 +63,7 @@
     <Compile Include="SchedulerOptions.cs" />
     <Compile Include="SchedulerSubscription.cs" />
     <Compile Include="StateEngine.cs" />
+    <Compile Include="ThreadedSpinWaitSchedulerOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
