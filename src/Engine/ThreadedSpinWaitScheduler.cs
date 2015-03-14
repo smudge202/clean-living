@@ -6,6 +6,7 @@ using System.Threading;
 
 namespace CleanLiving.Engine
 {
+    [Obsolete("UNSAFE CLASS! This class must not be used in debug, unit or component tests,")]
     internal class ThreadedSpinWaitScheduler : IScheduler, IDisposable
     {
         private readonly ManualResetEventSlim _release = new ManualResetEventSlim();
