@@ -1,6 +1,6 @@
 # Clean Living
 
-[![Build status](https://ci.appveyor.com/api/projects/status/2wwrvmewlqjrdvkq/branch/dev?svg=true)](https://ci.appveyor.com/project/Smudge202/clean-living/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/2wwrvmewlqjrdvkq?svg=true)](https://ci.appveyor.com/project/Smudge202/clean-living)
 [![Stories in Ready](https://badge.waffle.io/smudge202/clean-living.png?label=ready&title=Ready)](http://waffle.io/smudge202/clean-living)
 
 Walking a mile in the shoes of a game developer.
