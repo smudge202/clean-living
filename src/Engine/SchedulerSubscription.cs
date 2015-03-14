@@ -11,6 +11,11 @@ namespace CleanLiving.Engine
             _observer = observer;
         }
 
+        internal void Publish(long gameTime)
+        {
+            _observer.OnNext(gameTime);
+        }
+
         public void Dispose() { }
     }
 }
