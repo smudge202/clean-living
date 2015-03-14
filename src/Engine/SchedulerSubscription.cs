@@ -16,6 +16,9 @@ namespace CleanLiving.Engine
             _observer.OnNext(gameTime);
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            _observer.OnCompleted();
+        }
     }
 }

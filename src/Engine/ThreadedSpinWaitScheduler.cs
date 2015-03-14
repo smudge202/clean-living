@@ -13,6 +13,7 @@ namespace CleanLiving.Engine
         private readonly IOptions<ThreadedSpinWaitSchedulerOptions> _config;
 
         private readonly ManualResetEventSlim _release = new ManualResetEventSlim();
+        private readonly ManualResetEventSlim _completed = new ManualResetEventSlim();
         private readonly ReaderWriterLockSlim _subscriptionsLock = new ReaderWriterLockSlim();
         private readonly CancellationTokenSource _scheduler = new CancellationTokenSource();
 
@@ -44,7 +45,7 @@ namespace CleanLiving.Engine
         {
             while (true)
             {
-                if (_scheduler.IsCancellationRequested) return;
+                if (_scheduler.IsCancellationRequested) break;
                 WaitForSubscriptions();
 
                 // TODO: Review for optimal enumeration pattern
@@ -60,6 +61,16 @@ namespace CleanLiving.Engine
                 foreach (var subscription in elapsedSubscriptions)
                     WaitToPublish(subscription);
             }
+            DisposeSubscriptions();
+        }
+
+        private void DisposeSubscriptions()
+        {
+            // TODO : Address potential racing condition in concurrent STA subscription
+            foreach (var subscription in GetCurrentSubscriptions())
+                foreach (var observer in subscription.Value)
+                    observer.Dispose();
+            _completed.Set();
         }
 
         private void WaitToPublish(KeyValuePair<long, ConcurrentBag<SchedulerSubscription>> subscription)
@@ -99,6 +110,8 @@ namespace CleanLiving.Engine
         {
             _scheduler.Cancel();
             _release.Set();
+            // TODO: Consider ramifications of slow disposal
+            _completed.Wait();
         }
     }
 }
