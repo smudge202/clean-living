@@ -7,6 +7,7 @@ namespace CleanLiving.Models
     {
         public Hydration(IEngine engine)
         {
+            if (engine == null) throw new ArgumentNullException(nameof(engine));
             engine.Subscribe(this, GameTime.Now);
         }
 
