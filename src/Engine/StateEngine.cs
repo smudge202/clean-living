@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CleanLiving.Engine
 {
@@ -8,8 +9,8 @@ namespace CleanLiving.Engine
         private readonly IClock _clock;
 
         // TODO : Move to dependency if/when used subscriptions need clearing
-        private Dictionary<GameTime, List<GameSubscription>> _subscriptions =
-            new Dictionary<GameTime, List<GameSubscription>>();
+        private Dictionary<GameTime, List<IGameSubscription>> _subscriptions =
+            new Dictionary<GameTime, List<IGameSubscription>>();
 
         public StateEngine(IClock clock)
         {
@@ -20,22 +21,26 @@ namespace CleanLiving.Engine
         public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
         {
             if (observer == null) throw new ArgumentNullException(nameof(observer));
-            var subscription = new GameSubscription(observer, _clock.Subscribe(this, time));
+            var subscription = new GameTimeSubscription(observer, _clock.Subscribe(this, time));
             if (_subscriptions.ContainsKey(time))
                 _subscriptions[time].Add(subscription);
             else
-                _subscriptions.Add(time, new List<GameSubscription>() { subscription });
+                _subscriptions.Add(time, new List<IGameSubscription>() { subscription });
             return subscription;
         }
 
         public IDisposable Subscribe<T>(IObserver<T> observer) where T : IEvent
         {
-            throw new ArgumentNullException();
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
+            return new GameEventSubscription<T>(observer);
         }
 
         public void OnNext(GameTime value)
         {
-            foreach (var subscription in _subscriptions[value])
+            var gameTimeSubscriptions = _subscriptions[value]
+                .Where(x => x.Type == typeof(GameTime))
+                .Select(x => x as IGameSubscription<GameTime>);
+            foreach (var subscription in gameTimeSubscriptions)
                 subscription.Publish(value);
         }
 

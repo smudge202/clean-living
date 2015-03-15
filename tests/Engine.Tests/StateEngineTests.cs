@@ -115,8 +115,15 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeWithoutObserverThenThrowsException()
             {
-                Action act = () => new StateEngine(new Mock<IClock>().Object).Subscribe(new Mock<IObserver<IEvent>>().Object);
+                Action act = () => new StateEngine(new Mock<IClock>().Object).Subscribe<IEvent>(null);
                 act.ShouldThrow<ArgumentNullException>();
+            }
+
+            [UnitTest]
+            public void WhenSubscribeForEventThenReceivesSubscription()
+            {
+                new StateEngine(new Mock<IClock>().Object).Subscribe(new Mock<IObserver<IEvent>>().Object)
+                    .Should().NotBeNull();
             }
         }
     }

@@ -53,11 +53,13 @@
   <ItemGroup>
     <Compile Include="Clock.cs" />
     <Compile Include="ClockSubscription.cs" />
-    <Compile Include="GameSubscription.cs" />
+    <Compile Include="GameEventSubscription.cs" />
     <Compile Include="GameTime.cs" />
+    <Compile Include="GameTimeSubscription.cs" />
     <Compile Include="IClock.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="IEvent.cs" />
+    <Compile Include="IGameSubscription.cs" />
     <Compile Include="IScheduler.cs" />
     <Compile Include="ThreadedSpinWaitScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

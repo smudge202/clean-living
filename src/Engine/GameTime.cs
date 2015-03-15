@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace CleanLiving.Engine
 {
     [DebuggerDisplay("GameTime: {Value}")]
-    public class GameTime
+    public class GameTime : IEvent
     {
         private static Stopwatch _timer = Stopwatch.StartNew();
 
