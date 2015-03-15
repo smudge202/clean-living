@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CleanLiving.TestsHelpers;
+using FluentAssertions;
 using Xunit;
 
 namespace CleanLiving.Engine.Tests
