@@ -7,5 +7,7 @@ namespace CleanLiving.Engine
         IDisposable Subscribe(IObserver<GameTime> observer, GameTime time);
 
         IDisposable Subscribe<T>(IObserver<T> observer) where T : IEvent;
+
+        void Publish<T>(T message) where T : IEvent;
     }
 }

@@ -13,8 +13,6 @@ namespace CleanLiving.Engine
             _nestedSubscription = nestedSubscription;
         }
 
-        public Type Type { get; private set; } = typeof(GameTime);
-
         public void Publish(GameTime message)
         {
             _observer.OnNext(message);

@@ -6,8 +6,6 @@ namespace CleanLiving.Engine
     {
         private readonly IObserver<T> _observer;
 
-        public Type Type { get; set; } = typeof(T);
-
         public GameEventSubscription(IObserver<T> observer)
         {
             _observer = observer;

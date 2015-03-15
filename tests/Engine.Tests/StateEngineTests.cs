@@ -125,6 +125,19 @@ namespace CleanLiving.Engine.Tests
                 new StateEngine(new Mock<IClock>().Object).Subscribe(new Mock<IObserver<IEvent>>().Object)
                     .Should().NotBeNull();
             }
+
+            [UnitTest]
+            public void WhenEventMatchSubscriptionIsRaisedThenNotifiesSubscriber()
+            {
+                var engine = new StateEngine(new Mock<IClock>().Object);
+                var observer = new Mock<IObserver<Fake.Event>>();
+                engine.Subscribe(observer.Object);
+                var message = new Fake.Event();
+
+                engine.Publish(message);
+
+                observer.Verify(m => m.OnNext(message), Times.Once);
+            }
         }
     }
 }

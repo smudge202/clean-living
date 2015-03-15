@@ -96,6 +96,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateEngineTests.cs" />
     <Compile Include="TestAttributes.cs" />
+    <Compile Include="Fake\Event.cs" />
     <Compile Include="ThreadedSpinWaitSchedulerTests.cs" />
   </ItemGroup>
   <ItemGroup>
