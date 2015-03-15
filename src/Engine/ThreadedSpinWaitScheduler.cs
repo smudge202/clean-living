@@ -80,7 +80,9 @@ namespace CleanLiving.Engine
             var elapsingSubscriptions = GetElapsingSubscriptions();
             if (!elapsingSubscriptions.Any())
             {
-                _release.Wait(_scheduler.Token);
+                if (IsCancelledWhilstWaiting(release => release.Wait(_scheduler.Token)))
+                    return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
+
                 return WaitForNextSubscriptions();
             }
             var nextSubscription = elapsingSubscriptions.First();
@@ -88,15 +90,23 @@ namespace CleanLiving.Engine
                 return elapsingSubscriptions;
             RescheduleSubscription(nextSubscription);
             var timeUntilNextSubscriptionDue = TimeSpan.FromMilliseconds(nextSubscription.Key - GameTime.Elapsed - _config.Options.AcceptableSpinWaitPeriodNanoseconds / 1000000);
+            if (IsCancelledWhilstWaiting(release => release.Wait(timeUntilNextSubscriptionDue, _scheduler.Token)))
+                return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
+            return WaitForNextSubscriptions();
+        }
+
+        private bool IsCancelledWhilstWaiting(Action<ManualResetEventSlim> waitStrategy)
+        {
+            // Exception Logic : An acknowledged but neccesary evil, sorry!
             try
             {
-                _release.Wait(timeUntilNextSubscriptionDue, _scheduler.Token);
+                waitStrategy(_release);
+                return false;
             }
             catch (OperationCanceledException)
             {
-                return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
+                return true;
             }
-            return WaitForNextSubscriptions();
         }
 
         private void RescheduleSubscription(KeyValuePair<long, ConcurrentBag<SchedulerSubscription>> subscription)
