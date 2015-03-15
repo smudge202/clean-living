@@ -1,4 +1,4 @@
-﻿using CleanLiving.TestsHelpers;
+﻿using CleanLiving.TestHelpers;
 using FluentAssertions;
 using Microsoft.Framework.OptionsModel;
 using Moq;

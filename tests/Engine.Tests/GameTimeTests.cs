@@ -1,4 +1,4 @@
-﻿using CleanLiving.TestsHelpers;
+﻿using CleanLiving.TestHelpers;
 using FluentAssertions;
 using Xunit;
 
