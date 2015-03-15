@@ -1,6 +1,6 @@
 # Clean Living
 
-[![Build status](https://ci.appveyor.com/api/projects/status/2wwrvmewlqjrdvkq/branch/dev?svg=true)](https://ci.appveyor.com/project/Smudge202/clean-living/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/2wwrvmewlqjrdvkq?svg=true)](https://ci.appveyor.com/project/Smudge202/clean-living)
 [![Stories in Ready](https://badge.waffle.io/smudge202/clean-living.png?label=ready&title=Ready)](http://waffle.io/smudge202/clean-living)
 
 Walking a mile in the shoes of a game developer.
@@ -44,7 +44,7 @@ Twitch: http://www.twitch.tv/herecydev
 
 **Matt Ridgway**
 
-I'm Matt, by day i'm a development manager and no longer get to write any code, so i like to make up for it by contributing to projects like this.
+I'm Matt, by day I'm a development manager and no longer get the chance to write any code, so I like to make up for it by contributing to projects like this.
 
 Twitch: http://www.twitch.tv/mattridgway
 Twitter: https://twitter.com/Matt_Ridgway
