@@ -4,7 +4,7 @@ namespace CleanLiving.Engine
 {
     internal sealed class GameEventSubscription<T> : IGameSubscription<T> where T : IEvent
     {
-        private readonly IObserver<T> _observer;
+        private IObserver<T> _observer;
 
         public GameEventSubscription(IObserver<T> observer)
         {
@@ -13,9 +13,12 @@ namespace CleanLiving.Engine
 
         public void Publish(T message)
         {
-            _observer.OnNext(message);
+            _observer?.OnNext(message);
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            _observer = null;
+        }
     }
 }

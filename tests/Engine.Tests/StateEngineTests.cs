@@ -138,6 +138,18 @@ namespace CleanLiving.Engine.Tests
 
                 observer.Verify(m => m.OnNext(message), Times.Once);
             }
+
+            [UnitTest]
+            public void WhenSubscriptionIsDisposedThenShouldNotNotifyObserver()
+            {
+                var engine = new StateEngine(new Mock<IClock>().Object);
+                var observer = new Mock<IObserver<Fake.Event>>();
+                using (var subscription = engine.Subscribe(observer.Object)) { }
+
+                engine.Publish(new Fake.Event());
+
+                observer.Verify(m => m.OnNext(It.IsAny<Fake.Event>()), Times.Never);
+            }
         }
     }
 }
