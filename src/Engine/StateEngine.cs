@@ -28,6 +28,11 @@ namespace CleanLiving.Engine
             return subscription;
         }
 
+        public IDisposable Subscribe<T>(IObserver<T> observer) where T : IEvent
+        {
+            throw new ArgumentNullException();
+        }
+
         public void OnNext(GameTime value)
         {
             foreach (var subscription in _subscriptions[value])

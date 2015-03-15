@@ -57,6 +57,7 @@
     <Compile Include="GameTime.cs" />
     <Compile Include="IClock.cs" />
     <Compile Include="IEngine.cs" />
+    <Compile Include="IEvent.cs" />
     <Compile Include="IScheduler.cs" />
     <Compile Include="ThreadedSpinWaitScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
