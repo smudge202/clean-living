@@ -1,6 +1,6 @@
 ﻿namespace CleanLiving.Engine
 {
-    public class SchedulerOptions
+    public class ClockOptions
     {
         public decimal InitialGameTimeMultiplier { get; set; }
     }

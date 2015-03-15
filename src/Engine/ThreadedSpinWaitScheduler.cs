@@ -64,7 +64,7 @@ namespace CleanLiving.Engine
 
         private void WaitToPublish(KeyValuePair<long, ConcurrentBag<SchedulerSubscription>> subscription)
         {
-            while (GameTime.Elapsed > subscription.Key) Thread.SpinWait(_config.Options.SpinWaitIterations);
+            while (GameTime.Elapsed < subscription.Key) Thread.SpinWait(_config.Options.SpinWaitIterations);
             foreach (var observer in subscription.Value)
                 observer.Publish(GameTime.Elapsed);
         }

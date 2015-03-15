@@ -28,14 +28,14 @@ namespace CleanLiving.Engine.Tests
         [UnitTest]
         public void WhenSchedulerNotProviderThenThrowsException()
         {
-            Action act = () => new Clock(new Mock<IOptions<SchedulerOptions>>().Object, null);
+            Action act = () => new Clock(new Mock<IOptions<ClockOptions>>().Object, null);
             act.ShouldThrow<ArgumentNullException>();
         }
 
         [UnitTest]
         public void WhenSubscribeWithoutObserverThenThrowsException()
         {
-            Action act = () => new Clock(new Mock<IOptions<SchedulerOptions>>().Object, new Mock<IScheduler>().Object)
+            Action act = () => new Clock(new Mock<IOptions<ClockOptions>>().Object, new Mock<IScheduler>().Object)
                 .Subscribe(null, GameTime.Now.Add(1));
             act.ShouldThrow<ArgumentNullException>();
         }
@@ -43,7 +43,7 @@ namespace CleanLiving.Engine.Tests
         [UnitTest]
         public void WhenSubscribeWithoutGameTimeThenThrowsException()
         {
-            Action act = () => new Clock(new Mock<IOptions<SchedulerOptions>>().Object, new Mock<IScheduler>().Object)
+            Action act = () => new Clock(new Mock<IOptions<ClockOptions>>().Object, new Mock<IScheduler>().Object)
                 .Subscribe(new Mock<IObserver<GameTime>>().Object, null);
             act.ShouldThrow<ArgumentNullException>();
         }
@@ -60,8 +60,8 @@ namespace CleanLiving.Engine.Tests
         [InlineData(1, 1, 1), InlineData(2, 2, 1), InlineData(5, 10, 2)]
         public void WhenSubscribeThenRequestsCorrectRealtimeCallbackFromScheduler(int timeMultiplier, int gameTimeWait, int expectedRealWait)
         {
-            var config = new Mock<IOptions<SchedulerOptions>>();
-            config.SetupGet(m => m.Options).Returns(new SchedulerOptions { InitialGameTimeMultiplier = timeMultiplier });
+            var config = new Mock<IOptions<ClockOptions>>();
+            config.SetupGet(m => m.Options).Returns(new ClockOptions { InitialGameTimeMultiplier = timeMultiplier });
             var scheduler = new Mock<IScheduler>();
             var clock = new Clock(config.Object, scheduler.Object);
 
@@ -70,12 +70,12 @@ namespace CleanLiving.Engine.Tests
             scheduler.Verify(m => m.Subscribe(clock, expectedRealWait), Times.Once);
         }
 
-        private static IOptions<SchedulerOptions> DefaultOptions
+        private static IOptions<ClockOptions> DefaultOptions
         {
             get
             {
-                var config = new Mock<IOptions<SchedulerOptions>>();
-                config.SetupGet(m => m.Options).Returns(new SchedulerOptions { InitialGameTimeMultiplier = 1m });
+                var config = new Mock<IOptions<ClockOptions>>();
+                config.SetupGet(m => m.Options).Returns(new ClockOptions { InitialGameTimeMultiplier = 1m });
                 return config.Object;
             }
         }

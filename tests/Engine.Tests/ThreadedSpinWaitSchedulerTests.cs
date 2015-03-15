@@ -9,33 +9,64 @@ namespace CleanLiving.Engine.Tests
     {
         private const long OneSecond = 1000000000;
 
-        [IntegrationTest(IntegrationTestJustification.UsesMultipleThreads)]
+        [UnsafeTest]
         public void WhenConfigNotProvidedThenThrowsException()
         {
-#pragma warning disable 0618
-            Action act = () => { using (var scheduler = new ThreadedSpinWaitScheduler(null)) { } };
-#pragma warning restore 0618
+            Action act = () => { using (var scheduler = GetScheduler(null)) { } };
             act.ShouldThrow<ArgumentNullException>();
         }
 
-        [IntegrationTest(IntegrationTestJustification.UsesMultipleThreads | IntegrationTestJustification.UsesThreadSynchronization)]
+        [UnsafeTest]
         public void WhenDisposedThenNotifiesObserversThatStreamIsCompleted()
         {
-            var config = new Mock<IOptions<ThreadedSpinWaitSchedulerOptions>>();
-            config.SetupGet(m => m.Options).Returns(new ThreadedSpinWaitSchedulerOptions
-            {
-                SchedulerThreadName = "Scheduler - Integration Test",
-                AcceptableSpinWaitPeriodNanoseconds = 0,
-                SpinWaitIterations = 1
-            });
+            var config = GetConfig();            
             var observer = new Mock<IObserver<long>>();
-#pragma warning disable 0618
-            using (var scheduler = new ThreadedSpinWaitScheduler(config.Object))
-#pragma warning restore 0618
-            {
-                scheduler.Subscribe(observer.Object, OneSecond);
-            }
+
+            using (var scheduler = GetScheduler(config.Object)) { scheduler.Subscribe(observer.Object, OneSecond); }
+
             observer.Verify(m => m.OnCompleted(), Times.Once);
+        }
+
+        [UnsafeTest]
+        public void WhenObserverHasElapsedThenReceivesNotification()
+        {
+            var config = GetConfig();
+            var observer = new Mock<IObserver<long>>();
+
+            using (var scheduler = GetScheduler(config.Object)) { scheduler.Subscribe(observer.Object, 0); }
+
+            observer.Verify(m => m.OnNext(It.IsAny<long>()), Times.Once);
+        }
+
+#pragma warning disable 0618
+        private ThreadedSpinWaitScheduler GetScheduler(IOptions<ThreadedSpinWaitSchedulerOptions> config)
+        {
+            return new ThreadedSpinWaitScheduler(config);
+        }
+#pragma warning restore 0618
+
+        private static Mock<IOptions<ThreadedSpinWaitSchedulerOptions>> GetConfig(ThreadedSpinWaitSchedulerOptions options = null)
+        {
+            if (options == null)
+                options = new ThreadedSpinWaitSchedulerOptions
+                {
+                    AcceptableSpinWaitPeriodNanoseconds = 0,
+                    SpinWaitIterations = 1
+                };
+            options.SchedulerThreadName = "Scheduler - Integration Test";
+            var config = new Mock<IOptions<ThreadedSpinWaitSchedulerOptions>>();
+            config.SetupGet(m => m.Options).Returns(options);
+            return config;
+        }
+
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+        private class UnsafeTest : IntegrationTestAttribute
+        {
+            public UnsafeTest() : base(
+                IntegrationTestJustification.UsesUnsafeClass |
+                IntegrationTestJustification.UsesMultipleThreads |
+                IntegrationTestJustification.UsesThreadSynchronization)
+            { }
         }
     }
 }

@@ -60,7 +60,7 @@
     <Compile Include="IScheduler.cs" />
     <Compile Include="ThreadedSpinWaitScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SchedulerOptions.cs" />
+    <Compile Include="ClockOptions.cs" />
     <Compile Include="SchedulerSubscription.cs" />
     <Compile Include="StateEngine.cs" />
     <Compile Include="ThreadedSpinWaitSchedulerOptions.cs" />

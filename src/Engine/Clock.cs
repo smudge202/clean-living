@@ -5,10 +5,10 @@ namespace CleanLiving.Engine
 {
     internal sealed class Clock : IClock, IObserver<long>
     {
-        private readonly IOptions<SchedulerOptions> _config;
+        private readonly IOptions<ClockOptions> _config;
         private readonly IScheduler _scheduler;
 
-        public Clock(IOptions<SchedulerOptions> config, IScheduler scheduler)
+        public Clock(IOptions<ClockOptions> config, IScheduler scheduler)
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
