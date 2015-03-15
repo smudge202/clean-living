@@ -38,6 +38,17 @@ namespace CleanLiving.Engine.Tests
             observer.Verify(m => m.OnNext(It.IsAny<long>()), Times.Once);
         }
 
+        [UnsafeTest]
+        public void WhenObserverIsNotElapsingThenDoesNotReceiveNotification()
+        {
+            var config = GetConfig();
+            var observer = new Mock<IObserver<long>>();
+
+            using (var scheduler = GetScheduler(config.Object)) { scheduler.Subscribe(observer.Object, OneSecond); }
+
+            observer.Verify(m => m.OnNext(It.IsAny<long>()), Times.Never);
+        }
+
 #pragma warning disable 0618
         private ThreadedSpinWaitScheduler GetScheduler(IOptions<ThreadedSpinWaitSchedulerOptions> config)
         {
