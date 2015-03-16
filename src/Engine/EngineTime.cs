@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace CleanLiving.Engine
 {
     [DebuggerDisplay("GameTime: {Value}")]
-    public class GameTime : IEvent
+    public class EngineTime : IEvent
     {
         private static Stopwatch _timer = Stopwatch.StartNew();
 
@@ -12,20 +12,20 @@ namespace CleanLiving.Engine
 
         public static CurrentGameTime Now { get; } = new CurrentGameTime();
 
-        private GameTime(long nanosecondsFromNow)
+        private EngineTime(long nanosecondsFromNow)
         {
             Value = Elapsed + nanosecondsFromNow;
         }
 
         public virtual long Value { get; private set; }
 
-        public class CurrentGameTime : GameTime
+        public class CurrentGameTime : EngineTime
         {
             internal CurrentGameTime() : base(0) { }
 
-            public GameTime Add(int nanosecondsFromNow)
+            public EngineTime Add(int nanosecondsFromNow)
             {
-                return new GameTime(nanosecondsFromNow);
+                return new EngineTime(nanosecondsFromNow);
             }
 
             public override long Value { get { return Elapsed; } }

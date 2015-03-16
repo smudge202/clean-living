@@ -5,23 +5,23 @@ namespace CleanLiving.Engine.Tests.Fake
 {
     internal class Clock : IClock
     {
-        private IObserver<GameTime> _observer;
+        private IEngineTimeObserver<IEvent> _observer;
 
-        private IDisposable _subscription;
-        internal void SubscribeReturns(IDisposable subscription)
+        private IClockSubscription _subscription;
+        internal void SubscribeReturns(IClockSubscription subscription)
         {
             _subscription = subscription;
         }
 
-        public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
+        public IClockSubscription Subscribe<T>(IEngineTimeObserver<T> observer, T message, EngineTime time) where T : IEvent
         {
-            _observer = observer;
-            return _subscription ?? new Mock<IDisposable>().Object;
+            _observer = observer as IEngineTimeObserver<IEvent>;
+            return _subscription ?? new Mock<IClockSubscription>().Object;
         }
 
-        internal void Publish(GameTime time)
+        internal void Publish<T>(T message, EngineTime time) where T : IEvent
         {
-            _observer.OnNext(time);
+            _observer.OnNext(message, time);
         }
     }
 }

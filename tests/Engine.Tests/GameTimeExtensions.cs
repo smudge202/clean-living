@@ -5,9 +5,9 @@ namespace CleanLiving.Engine.Tests
 {
     internal static class GameTimeExtensions
     {
-        public static GameTime.CurrentGameTime Stopped(this GameTime.CurrentGameTime now)
+        public static EngineTime.CurrentGameTime Stopped(this EngineTime.CurrentGameTime now)
         {
-            var timerMember = typeof(GameTime).GetField("_timer", BindingFlags.Static | BindingFlags.NonPublic);
+            var timerMember = typeof(EngineTime).GetField("_timer", BindingFlags.Static | BindingFlags.NonPublic);
             var timer = timerMember.GetValue(null) as Stopwatch;
             timer.Stop();
             return now;

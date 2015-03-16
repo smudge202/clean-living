@@ -2,9 +2,9 @@
 
 namespace CleanLiving.Engine
 {
-    public interface IEngine
+    public interface IEngine<TTime>
     {
-        IDisposable Subscribe(IObserver<GameTime> observer, GameTime time);
+        IDisposable Subscribe<T>(IGameTimeObserver<T, TTime> observer, T message, TTime time) where T : IEvent;
 
         IDisposable Subscribe<T>(IObserver<T> observer) where T : IEvent;
 

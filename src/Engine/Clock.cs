@@ -16,13 +16,14 @@ namespace CleanLiving.Engine
             _scheduler = scheduler;
         }
 
-        public IDisposable Subscribe(IObserver<GameTime> observer, GameTime time)
+        public IClockSubscription Subscribe<T>(IEngineTimeObserver<T> observer, T message, EngineTime time) where T : IEvent
         {
             if (observer == null) throw new ArgumentNullException(nameof(observer));
+            if (message == null) throw new ArgumentNullException(nameof(message));
             if (time == null) throw new ArgumentNullException(nameof(time));
 
             var currentMultiplier = _config.Options.InitialGameTimeMultiplier;
-            var gameNanosecondsFromNow = time.Value - GameTime.Elapsed;
+            var gameNanosecondsFromNow = time.Value - EngineTime.Elapsed;
             _scheduler.Subscribe(this, Convert.ToInt64(gameNanosecondsFromNow / currentMultiplier));
 
             return new ClockSubscription();
