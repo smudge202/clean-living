@@ -288,6 +288,17 @@ namespace CleanLiving.Engine.Tests
                 }
                 observer.Verify(m => m.OnNext(request), Times.Once);
             }
+
+            [UnitTest]
+            public void WhenSubscriptionIsDisposedThenObserverIsNotNotified()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var observer = new Mock<IObserver<Fake.Request>>();
+                var request = new Fake.Request();
+                using (engine.Subscribe(observer.Object)) { }
+                engine.Publish(request);
+                observer.Verify(m => m.OnNext(request), Times.Never);
+            }
         }
 
         private static IOptions<TimeOptions<Fake.GameTime>> DefaultConfig
