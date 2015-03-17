@@ -255,6 +255,14 @@ namespace CleanLiving.Engine.Tests
 
                 observer.Verify(m => m.OnNext(It.IsAny<Fake.Event>()), Times.Never);
             }
+
+            [UnitTest]
+            public void WhenSubscriptionForEventDoesNotExistThenDoesNotThrowException()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                Action act = () => engine.Publish(new Fake.Event());
+                act.ShouldNotThrow<Exception>();
+            }
         }
 
         public class SubscribeForRequest
@@ -298,6 +306,15 @@ namespace CleanLiving.Engine.Tests
                 using (engine.Subscribe(observer.Object)) { }
                 engine.Publish(request);
                 observer.Verify(m => m.OnNext(request), Times.Never);
+            }
+
+            [UnitTest]
+            public void WhenSubscribingForRequestTypeThatPreviouslyHadSubscriptionDisposedThenDoesNotThrowException()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                using (engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object)) { };
+                Action act = () => engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object);
+                act.ShouldNotThrow<Exception>();
             }
         }
 

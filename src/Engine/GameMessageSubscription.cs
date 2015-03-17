@@ -9,21 +9,24 @@ namespace CleanLiving.Engine
 
     internal sealed class GameMessageSubscription<T> : GameMessageSubscription where T : IMessage
     {
-        private IObserver<T> _observer;
+        private readonly GameMessageSubscriptionManager _manager;
+        internal IObserver<T> Observer { get; private set; }
 
-        public GameMessageSubscription(IObserver<T> observer)
+        public GameMessageSubscription(GameMessageSubscriptionManager manager, IObserver<T> observer)
         {
-            _observer = observer;
+            _manager = manager;
+            Observer = observer;
         }
 
         public void Publish(T message)
         {
-            _observer?.OnNext(message);
+            Observer?.OnNext(message);
         }
 
         public override void Dispose()
         {
-            _observer = null;
+            _manager.Remove(Observer);
+            Observer = null;
         }
     }
 }

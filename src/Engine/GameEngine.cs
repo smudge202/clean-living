@@ -11,11 +11,10 @@ namespace CleanLiving.Engine
         private readonly ITranslateTime<TTime> _translator;
 
         // TODO : Move to dependency if/when used subscriptions need clearing
-        private Dictionary<Type, List<GameMessageSubscription>> _eventSubscriptions =
-            new Dictionary<Type, List<GameMessageSubscription>>();
+        private GameMessageSubscriptionManager _eventSubscriptions =
+            new GameMessageSubscriptionManager();
 
-        private Dictionary<Type, List<GameTimeSubscription>> _timeSubscriptions =
-            new Dictionary<Type, List<GameTimeSubscription>>();
+        private GameTimeSubscriptionManager<TTime> _timeSubscriptions;
 
         public GameEngine(IOptions<TimeOptions<TTime>> config, ITranslateTime<TTime> timeTranslator, IClock clock)
         {
@@ -25,36 +24,28 @@ namespace CleanLiving.Engine
             if (config.Options == null) throw new ArgumentException(nameof(config.Options));
             _clock = clock;
             _translator = timeTranslator;
+            _timeSubscriptions = new GameTimeSubscriptionManager<TTime>(timeTranslator);
         }
 
         public void OnNext<T>(T message, EngineTime time) where T : IEvent
         {
-            var timeSubscriptions = _timeSubscriptions[typeof(T)]
-                .Select(x => x as GameTimeSubscription<T, TTime>);
-            foreach (var subscription in timeSubscriptions)
-                subscription.Publish(message, _translator.ToGameTime(time));
+            _timeSubscriptions.Publish(message, time);
         }
 
         public void Publish<T>(T message) where T : IMessage
         {
-            var eventSubscriptions = _eventSubscriptions[typeof(T)]
-                .Select(x => x as GameMessageSubscription<T>);
-            foreach (var subscription in eventSubscriptions)
-                subscription.Publish(message);
+            _eventSubscriptions.Publish(message);
         }
 
         public IDisposable Subscribe<T>(IObserver<T> observer) where T : IMessage
         {
             if (observer == null) throw new ArgumentNullException(nameof(observer));
-            var subscription = new GameMessageSubscription<T>(observer);
+            var subscription = new GameMessageSubscription<T>(_eventSubscriptions, observer);
             var messageType = typeof(T);
-            if (_eventSubscriptions.ContainsKey(messageType))
-                if (typeof(IRequest).IsAssignableFrom(messageType))
-                    throw new MultipleRequestHandlersException(messageType);
-                else
-                    _eventSubscriptions[messageType].Add(subscription);
-            else
-                _eventSubscriptions.Add(messageType, new List<GameMessageSubscription>() { subscription });
+            if (_eventSubscriptions.ContainsKey(messageType) && typeof(IRequest).IsAssignableFrom(messageType))
+                throw new MultipleRequestHandlersException(messageType);
+            var subscriptions = _eventSubscriptions.GetOrAdd(messageType);
+            subscriptions.Add(subscription);
             return subscription;
         }
 
@@ -68,10 +59,8 @@ namespace CleanLiving.Engine
             var subscription = GameTimeSubscription.For(observer, message, clockSubscription);
 
             var messageType = typeof(T);
-            if (_timeSubscriptions.ContainsKey(messageType))
-                _timeSubscriptions[messageType].Add(subscription);
-            else
-                _timeSubscriptions.Add(messageType, new List<GameTimeSubscription>() { subscription });
+            var subscriptions = _timeSubscriptions.GetOrAdd(messageType);
+            subscriptions.Add(subscription);
             return subscription;
         }
 
