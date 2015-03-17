@@ -43,6 +43,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,8 +53,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engines\IGregorianEngine.cs" />
+    <Compile Include="Events\ConsumedFood.cs" />
     <Compile Include="Events\HydrationDiminished.cs" />
+    <Compile Include="Events\NourishmentChanged.cs" />
+    <Compile Include="Events\NourishmentDiminished.cs" />
     <Compile Include="Hydration.cs" />
+    <Compile Include="Nourishment.cs" />
+    <Compile Include="NourishmentConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Time\ITimeFactory.cs" />
     <Compile Include="Time\TimeOptions.cs" />
