@@ -31,7 +31,7 @@ namespace CleanLiving.Engine
 
         public IDisposable Subscribe(IObserver<long> observer, long nanosecondsFromNow)
         {
-            var realtime = GameTime.Elapsed + nanosecondsFromNow;
+            var realtime = EngineTime.Elapsed + nanosecondsFromNow;
             var subscription = new SchedulerSubscription(observer);
             _subscriptionsLock.EnterWriteLock();
             var realtimeEvent = _subscriptions.GetOrAdd(realtime, new ConcurrentBag<SchedulerSubscription>());
@@ -64,9 +64,9 @@ namespace CleanLiving.Engine
 
         private void WaitToPublish(KeyValuePair<long, ConcurrentBag<SchedulerSubscription>> subscription)
         {
-            while (GameTime.Elapsed < subscription.Key) Thread.SpinWait(_config.Options.SpinWaitIterations);
+            while (EngineTime.Elapsed < subscription.Key) Thread.SpinWait(_config.Options.SpinWaitIterations);
             foreach (var observer in subscription.Value)
-                observer.Publish(GameTime.Elapsed);
+                observer.Publish(EngineTime.Elapsed);
         }
 
         private SortedList<long, ConcurrentBag<SchedulerSubscription>> WaitForNextSubscriptions()
@@ -86,10 +86,10 @@ namespace CleanLiving.Engine
                 return WaitForNextSubscriptions();
             }
             var nextSubscription = elapsingSubscriptions.First();
-            if (nextSubscription.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
+            if (nextSubscription.Key <= (EngineTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
                 return elapsingSubscriptions;
             RescheduleSubscription(nextSubscription);
-            var timeUntilNextSubscriptionDue = TimeSpan.FromMilliseconds(nextSubscription.Key - GameTime.Elapsed - _config.Options.AcceptableSpinWaitPeriodNanoseconds / 1000000);
+            var timeUntilNextSubscriptionDue = TimeSpan.FromMilliseconds(nextSubscription.Key - EngineTime.Elapsed - _config.Options.AcceptableSpinWaitPeriodNanoseconds / 1000000);
             if (IsCancelledWhilstWaiting(release => release.Wait(timeUntilNextSubscriptionDue, _scheduler.Token)))
                 return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
             return WaitForNextSubscriptions();
@@ -122,7 +122,7 @@ namespace CleanLiving.Engine
             if (!currentSubscriptions.Any()) return new SortedList<long, ConcurrentBag<SchedulerSubscription>>(0);
 
             var elapsingSubscriptions = currentSubscriptions
-                .Where(x => x.Key <= (GameTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
+                .Where(x => x.Key <= (EngineTime.Elapsed + _config.Options.AcceptableSpinWaitPeriodNanoseconds))
                 .ToList();
 
             if (!elapsingSubscriptions.Any())

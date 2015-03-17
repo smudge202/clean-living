@@ -37,7 +37,15 @@ namespace CleanLiving.Engine.Tests
         public void WhenSubscribeWithoutObserverThenThrowsException()
         {
             Action act = () => new Clock(new Mock<IOptions<ClockOptions>>().Object, new Mock<IScheduler>().Object)
-                .Subscribe(null, GameTime.Now.Add(1));
+                .Subscribe(null, new Fake.Event(), EngineTime.Now.Add(1));
+            act.ShouldThrow<ArgumentNullException>();
+        }
+
+        [UnitTest]
+        public void WhenSubscribeWithoutMessageThenThrowsException()
+        {
+            Action act = () => new Clock(DefaultOptions, new Mock<IScheduler>().Object)
+                .Subscribe(new Mock<IEngineTimeObserver<Fake.Event>>().Object, null, EngineTime.Now.Add(1));
             act.ShouldThrow<ArgumentNullException>();
         }
 
@@ -45,7 +53,7 @@ namespace CleanLiving.Engine.Tests
         public void WhenSubscribeWithoutGameTimeThenThrowsException()
         {
             Action act = () => new Clock(new Mock<IOptions<ClockOptions>>().Object, new Mock<IScheduler>().Object)
-                .Subscribe(new Mock<IObserver<GameTime>>().Object, null);
+                .Subscribe(new Mock<IEngineTimeObserver<Fake.Event>>().Object, new Fake.Event(), null);
             act.ShouldThrow<ArgumentNullException>();
         }
 
@@ -53,7 +61,7 @@ namespace CleanLiving.Engine.Tests
         public void WhenSubscribeThenReturnsSubscription()
         {
             new Clock(DefaultOptions, new Mock<IScheduler>().Object)
-                .Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Add(1))
+                .Subscribe(new Mock<IEngineTimeObserver<Fake.Event>>().Object, new Fake.Event(), EngineTime.Now.Add(1))
                 .Should().NotBeNull();
         }
 
@@ -66,7 +74,7 @@ namespace CleanLiving.Engine.Tests
             var scheduler = new Mock<IScheduler>();
             var clock = new Clock(config.Object, scheduler.Object);
 
-            clock.Subscribe(new Mock<IObserver<GameTime>>().Object, GameTime.Now.Stopped().Add(gameTimeWait));
+            clock.Subscribe(new Mock<IEngineTimeObserver<Fake.Event>>().Object, new Fake.Event(), EngineTime.Now.Stopped().Add(gameTimeWait));
 
             scheduler.Verify(m => m.Subscribe(clock, expectedRealWait), Times.Once);
         }
