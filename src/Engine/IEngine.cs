@@ -8,6 +8,6 @@ namespace CleanLiving.Engine
 
         IDisposable Subscribe<T>(IObserver<T> observer) where T : IMessage;
 
-        void Publish<T>(T message) where T : IEvent;
+        void Publish<T>(T message) where T : IMessage;
     }
 }

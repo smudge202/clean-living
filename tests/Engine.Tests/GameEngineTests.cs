@@ -275,6 +275,19 @@ namespace CleanLiving.Engine.Tests
                 act.ShouldNotThrow<Exception>();
                 act.ShouldThrow<MultipleRequestHandlersException>();
             }
+
+            [UnitTest]
+            public void WhenRequestPublishedMatchingSubscriptionThenPassesRequestToHandler()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var observer = new Mock<IObserver<Fake.Request>>();
+                var request = new Fake.Request();
+                using (engine.Subscribe(observer.Object))
+                {
+                    engine.Publish(request);
+                }
+                observer.Verify(m => m.OnNext(request), Times.Once);
+            }
         }
 
         private static IOptions<TimeOptions<Fake.GameTime>> DefaultConfig

@@ -35,7 +35,7 @@ namespace CleanLiving.Engine
                 subscription.Publish(message, _translator.ToGameTime(time));
         }
 
-        public void Publish<T>(T message) where T : IEvent
+        public void Publish<T>(T message) where T : IMessage
         {
             var eventSubscriptions = _eventSubscriptions[typeof(T)]
                 .Select(x => x as GameMessageSubscription<T>);
@@ -84,5 +84,7 @@ namespace CleanLiving.Engine
         {
             throw new NotImplementedException();
         }
+
+        // TODO : IEngine stores IDisposable, so should be IDisposable in turn
     }
 }
