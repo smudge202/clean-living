@@ -1,6 +1,8 @@
-﻿namespace CleanLiving.Models.Events
+﻿using CleanLiving.Engine;
+
+namespace CleanLiving.Models.Events
 {
-    public class NourishmentChanged
+    public class NourishmentChanged : IEvent
     {
         public decimal Nourishment { get; set; }
     }

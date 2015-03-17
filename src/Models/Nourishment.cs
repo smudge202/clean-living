@@ -16,7 +16,7 @@ namespace CleanLiving.Models
         public Nourishment(IOptions<NourishmentConfiguration<TInterval>> configurationProvider, ITimeFactory<TTime, TInterval> timeFactory, IEngine<TTime> engine)
         {
             if (configurationProvider == null) throw new ArgumentNullException(nameof(configurationProvider));
-            if(timeFactory == null) throw new ArgumentNullException(nameof(timeFactory));
+            if (timeFactory == null) throw new ArgumentNullException(nameof(timeFactory));
             if (engine == null) throw new ArgumentNullException(nameof(engine));
 
             if (configurationProvider.Options == null) throw new ConfigurationErrorsException();
@@ -45,6 +45,18 @@ namespace CleanLiving.Models
                 _nourishment = _configuration.MaximumNourishment;
         }
 
+        public void OnNext(NourishmentDiminished message, TTime time)
+        {
+            reduceNourishment(_configuration.NourishmentDiminishValue);
+            _engine.Publish(new NourishmentChanged { Nourishment = _nourishment });
+        }
+
+        public void OnNext(ConsumedFood value)
+        {
+            increaseNourishment(value.NourishmentValue);
+            _engine.Publish(new NourishmentChanged { Nourishment = _nourishment });
+        }
+
         public void OnCompleted()
         {
             throw new NotImplementedException();
@@ -55,14 +67,5 @@ namespace CleanLiving.Models
             throw new NotImplementedException();
         }
 
-        public void OnNext(NourishmentDiminished message, TTime time)
-        {
-            reduceNourishment(_configuration.NourishmentDiminishValue);
-        }
-
-        public void OnNext(ConsumedFood value)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
