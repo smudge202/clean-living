@@ -1,6 +1,4 @@
 ﻿namespace CleanLiving.Engine
 {
-    public interface IEvent
-    {
-    }
+    public interface IEvent : IMessage { }
 }

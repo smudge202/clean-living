@@ -11,8 +11,8 @@ namespace CleanLiving.Engine
         private readonly ITranslateTime<TTime> _translator;
 
         // TODO : Move to dependency if/when used subscriptions need clearing
-        private Dictionary<Type, List<GameEventSubscription>> _eventSubscriptions =
-            new Dictionary<Type, List<GameEventSubscription>>();
+        private Dictionary<Type, List<GameMessageSubscription>> _eventSubscriptions =
+            new Dictionary<Type, List<GameMessageSubscription>>();
 
         private Dictionary<Type, List<GameTimeSubscription>> _timeSubscriptions =
             new Dictionary<Type, List<GameTimeSubscription>>();
@@ -38,20 +38,23 @@ namespace CleanLiving.Engine
         public void Publish<T>(T message) where T : IEvent
         {
             var eventSubscriptions = _eventSubscriptions[typeof(T)]
-                .Select(x => x as GameEventSubscription<T>);
+                .Select(x => x as GameMessageSubscription<T>);
             foreach (var subscription in eventSubscriptions)
                 subscription.Publish(message);
         }
 
-        public IDisposable Subscribe<T>(IObserver<T> observer) where T : IEvent
+        public IDisposable Subscribe<T>(IObserver<T> observer) where T : IMessage
         {
             if (observer == null) throw new ArgumentNullException(nameof(observer));
-            var subscription = new GameEventSubscription<T>(observer);
-            var eventType = typeof(T);
-            if (_eventSubscriptions.ContainsKey(eventType))
-                _eventSubscriptions[eventType].Add(subscription);
+            var subscription = new GameMessageSubscription<T>(observer);
+            var messageType = typeof(T);
+            if (_eventSubscriptions.ContainsKey(messageType))
+                if (typeof(IRequest).IsAssignableFrom(messageType))
+                    throw new MultipleRequestHandlersException(messageType);
+                else
+                    _eventSubscriptions[messageType].Add(subscription);
             else
-                _eventSubscriptions.Add(eventType, new List<GameEventSubscription>() { subscription });
+                _eventSubscriptions.Add(messageType, new List<GameMessageSubscription>() { subscription });
             return subscription;
         }
 

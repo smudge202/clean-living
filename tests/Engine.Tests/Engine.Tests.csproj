@@ -91,6 +91,7 @@
     <Compile Include="ClockTests.cs" />
     <Compile Include="Fake\Clock.cs" />
     <Compile Include="Fake\GameTime.cs" />
+    <Compile Include="Fake\Request.cs" />
     <Compile Include="GameEngineTests.cs" />
     <Compile Include="GameTimeExtensions.cs" />
     <Compile Include="GameTimeTests.cs" />

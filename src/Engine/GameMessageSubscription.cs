@@ -2,16 +2,16 @@
 
 namespace CleanLiving.Engine
 {
-    internal abstract class GameEventSubscription : IDisposable
+    internal abstract class GameMessageSubscription : IDisposable
     {
         public abstract void Dispose();
     }
 
-    internal sealed class GameEventSubscription<T> : GameEventSubscription where T : IEvent
+    internal sealed class GameMessageSubscription<T> : GameMessageSubscription where T : IMessage
     {
         private IObserver<T> _observer;
 
-        public GameEventSubscription(IObserver<T> observer)
+        public GameMessageSubscription(IObserver<T> observer)
         {
             _observer = observer;
         }

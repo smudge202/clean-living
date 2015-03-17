@@ -54,7 +54,7 @@
     <Compile Include="Clock.cs" />
     <Compile Include="ClockSubscription.cs" />
     <Compile Include="GameEngine.cs" />
-    <Compile Include="GameEventSubscription.cs" />
+    <Compile Include="GameMessageSubscription.cs" />
     <Compile Include="EngineTime.cs" />
     <Compile Include="GameTimeSubscription.cs" />
     <Compile Include="IClock.cs" />
@@ -62,9 +62,12 @@
     <Compile Include="IEngine.cs" />
     <Compile Include="IEngineTimeObserver.cs" />
     <Compile Include="IEvent.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="IRequest.cs" />
     <Compile Include="IScheduler.cs" />
     <Compile Include="IGameTimeObserver.cs" />
     <Compile Include="ITranslateTime.cs" />
+    <Compile Include="MultipleRequestHandlersException.cs" />
     <Compile Include="ThreadedSpinWaitScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClockOptions.cs" />

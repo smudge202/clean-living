@@ -257,6 +257,26 @@ namespace CleanLiving.Engine.Tests
             }
         }
 
+        public class SubscribeForRequest
+        {
+            [UnitTest]
+            public void WhenSubscribeWithoutObserverThenThrowsException()
+            {
+                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                    .Subscribe<IRequest>(null);
+                act.ShouldThrow<ArgumentNullException>();
+            }
+
+            [UnitTest]
+            public void WhenSubscribeForHandlerRequestThenThrowsException()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                Action act = () => engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object);
+                act.ShouldNotThrow<Exception>();
+                act.ShouldThrow<MultipleRequestHandlersException>();
+            }
+        }
+
         private static IOptions<TimeOptions<Fake.GameTime>> DefaultConfig
         {
             get
