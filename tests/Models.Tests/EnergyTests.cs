@@ -104,7 +104,19 @@ namespace CleanLiving.Models.Tests
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
-                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e=>e.Energy == 0m)));
+                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e => e.Energy == 0m)));
+            }
+
+            [UnitTest]
+            public void GivenEnergyFarAboveMinimumWhenInvokedThenPublishesEnergyChangedEventWithCorrespondingEnergyValue()
+            {
+                _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
+
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+
+                _energy.OnNext(new EnergyDiminished(), new GameTime());
+
+                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e => e.Energy == 0.4m)));
             }
         }
     }

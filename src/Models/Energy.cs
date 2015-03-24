@@ -11,6 +11,7 @@ namespace CleanLiving.Models
     {
         private readonly EnergyConfiguration<TInterval> _configuration;
         private readonly IEngine<TTime> _engine;
+        private decimal _energy;
 
         public Energy(IOptions<EnergyConfiguration<TInterval>> configurationProvider, ITimeFactory<TTime, TInterval> timeFactory, IEngine<TTime> engine)
         {
@@ -24,12 +25,23 @@ namespace CleanLiving.Models
 
             _engine = engine;
 
+            _energy = _configuration.StartingEnergy;
             _engine.Subscribe(this, new EnergyDiminished(), timeFactory.FromNow(_configuration.EnergyDiminishInterval));
+        }
+
+        private void reduceEnergy(decimal value)
+        {
+            if (_energy - value < _configuration.MinimumEnergy)
+                _energy = _configuration.MinimumEnergy;
+            else
+                _energy -= value;
         }
 
         public void OnNext(EnergyDiminished message, TTime time)
         {
-            _engine.Publish(new EnergyChanged());
+            reduceEnergy(_configuration.EnergyDiminishValue);
+
+            _engine.Publish(new EnergyChanged { Energy = _energy });
         }
 
         public void OnCompleted()

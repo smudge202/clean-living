@@ -32,7 +32,7 @@ namespace CleanLiving.Models
         private void reduceNourishment(decimal value)
         {
             if (_nourishment - value > _configuration.MinimumNourishment)
-                _nourishment = _nourishment - value;
+                _nourishment -= value;
             else
                 _nourishment = _configuration.MinimumNourishment;
         }
@@ -40,7 +40,7 @@ namespace CleanLiving.Models
         private void increaseNourishment(decimal value)
         {
             if (_nourishment + value < _configuration.MaximumNourishment)
-                _nourishment = _nourishment + value;
+                _nourishment += value;
             else
                 _nourishment = _configuration.MaximumNourishment;
         }
