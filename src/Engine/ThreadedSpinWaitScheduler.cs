@@ -55,7 +55,6 @@ namespace CleanLiving.Engine
 
         private void DisposeSubscriptions()
         {
-            // TODO : Address potential racing condition in concurrent STA subscription
             foreach (var subscription in GetCurrentSubscriptions())
                 foreach (var observer in subscription.Value)
                     observer.Dispose();
@@ -150,7 +149,6 @@ namespace CleanLiving.Engine
         {
             _scheduler.Cancel();
             _release.Set();
-            // TODO: Consider ramifications of slow disposal
             _completed.Wait();
         }
     }

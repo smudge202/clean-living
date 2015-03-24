@@ -10,7 +10,6 @@ namespace CleanLiving.Engine
         private readonly IClock _clock;
         private readonly ITranslateTime<TTime> _translator;
 
-        // TODO : Move to dependency if/when used subscriptions need clearing
         private GameMessageSubscriptionManager _eventSubscriptions =
             new GameMessageSubscriptionManager();
 
@@ -73,7 +72,5 @@ namespace CleanLiving.Engine
         {
             throw new NotImplementedException();
         }
-
-        // TODO : IEngine stores IDisposable, so should be IDisposable in turn
     }
 }
