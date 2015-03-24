@@ -65,7 +65,7 @@ namespace CleanLiving.Models.Tests
 
                 var energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
 
-                _engineMock.Verify(x=>x.Subscribe(energy, It.IsAny<EnergyDiminished>(), It.IsAny<GameTime>()));
+                _engineMock.Verify(x=>x.Subscribe(energy, It.IsAny<EnergyDiminished>(), It.IsAny<GameTime>()), Times.Once);
             }
         }
 
@@ -92,7 +92,7 @@ namespace CleanLiving.Models.Tests
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
-                _engineMock.Verify(x => x.Publish(It.IsAny<EnergyChanged>()));
+                _engineMock.Verify(x => x.Publish(It.IsAny<EnergyChanged>()), Times.Once);
             }
 
             [UnitTest]
@@ -104,7 +104,7 @@ namespace CleanLiving.Models.Tests
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
-                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e => e.Energy == 0m)));
+                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e => e.Energy == 0m)), Times.Once);
             }
 
             [UnitTest]
@@ -116,7 +116,19 @@ namespace CleanLiving.Models.Tests
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
-                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e => e.Energy == 0.4m)));
+                _engineMock.Verify(x => x.Publish(It.Is<EnergyChanged>(e => e.Energy == 0.4m)), Times.Once);
+            }
+
+            [UnitTest]
+            public void WhenInvokedThenResubscribesItselfToTheEngineWithCorrespondingIntervalInConfiguration()
+            {
+                _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
+
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+
+                _energy.OnNext(new EnergyDiminished(), new GameTime());
+
+                _engineMock.Verify(x => x.Subscribe(_energy, It.IsAny<EnergyDiminished>(), It.IsAny<GameTime>()), Times.Exactly(2));
             }
         }
     }

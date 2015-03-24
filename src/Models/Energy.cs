@@ -10,6 +10,7 @@ namespace CleanLiving.Models
     public class Energy<TTime, TInterval> : IGameTimeObserver<EnergyDiminished, TTime>
     {
         private readonly EnergyConfiguration<TInterval> _configuration;
+        private readonly ITimeFactory<TTime, TInterval> _timeFactory;
         private readonly IEngine<TTime> _engine;
         private decimal _energy;
 
@@ -24,9 +25,10 @@ namespace CleanLiving.Models
             if (_configuration == null) throw new ConfigurationErrorsException();
 
             _engine = engine;
+            _timeFactory = timeFactory;
 
             _energy = _configuration.StartingEnergy;
-            _engine.Subscribe(this, new EnergyDiminished(), timeFactory.FromNow(_configuration.EnergyDiminishInterval));
+            _engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
         }
 
         private void reduceEnergy(decimal value)
@@ -42,6 +44,7 @@ namespace CleanLiving.Models
             reduceEnergy(_configuration.EnergyDiminishValue);
 
             _engine.Publish(new EnergyChanged { Energy = _energy });
+            _engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
         }
 
         public void OnCompleted()

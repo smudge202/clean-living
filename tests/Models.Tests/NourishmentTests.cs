@@ -77,7 +77,7 @@ namespace CleanLiving.Models.Tests
                 var hunger = new Nourishment<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
 
                 //Assert
-                _engineMock.Verify(x => x.Subscribe(hunger, It.IsAny<NourishmentDiminished>(), It.IsAny<GameTime>()));
+                _engineMock.Verify(x => x.Subscribe(hunger, It.IsAny<NourishmentDiminished>(), It.IsAny<GameTime>()), Times.Once);
             }
         }
 
@@ -107,7 +107,7 @@ namespace CleanLiving.Models.Tests
                 _nourishment.OnNext(new NourishmentDiminished(), new GameTime());
 
                 //Assert
-                _engineMock.Verify(x => x.Publish(It.IsAny<NourishmentChanged>()));
+                _engineMock.Verify(x => x.Publish(It.IsAny<NourishmentChanged>()), Times.Once);
             }
 
             [UnitTest]
@@ -115,7 +115,7 @@ namespace CleanLiving.Models.Tests
             {
                 //Arrange
                 var nourishmentConfiguration = new NourishmentConfiguration<GameInterval>();
-                
+
                 nourishmentConfiguration.MinimumNourishment = 0m;
                 nourishmentConfiguration.StartingNourishment = 0.05m;
                 nourishmentConfiguration.NourishmentDiminishValue = 0.1m;
@@ -128,7 +128,7 @@ namespace CleanLiving.Models.Tests
                 _nourishment.OnNext(new NourishmentDiminished(), new GameTime());
 
                 //Assert
-                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == nourishmentConfiguration.MinimumNourishment)));
+                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == nourishmentConfiguration.MinimumNourishment)), Times.Once);
             }
 
             [UnitTest]
@@ -149,7 +149,7 @@ namespace CleanLiving.Models.Tests
                 _nourishment.OnNext(new NourishmentDiminished(), new GameTime());
 
                 //Assert
-                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == 0.3m)));
+                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == 0.3m)), Times.Once);
             }
         }
 
@@ -184,7 +184,7 @@ namespace CleanLiving.Models.Tests
                 _nourishment.OnNext(new ConsumedFood { NourishmentValue = 0.1m });
 
                 //Assert
-                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == nourishmentConfiguration.MaximumNourishment)));
+                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == nourishmentConfiguration.MaximumNourishment)), Times.Once);
             }
 
             [UnitTest]
@@ -204,8 +204,25 @@ namespace CleanLiving.Models.Tests
                 _nourishment.OnNext(new ConsumedFood { NourishmentValue = 0.1m });
 
                 //Assert
-                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == 0.6m)));
+                _engineMock.Verify(x => x.Publish(It.Is<NourishmentChanged>(n => n.Nourishment == 0.6m)), Times.Once);
             }
+        }
+
+        public class TheOnNextNourishmentChangedMethod
+        {
+            private readonly Mock<IOptions<NourishmentConfiguration<GameInterval>>> _configurationProviderMock;
+            private readonly Mock<ITimeFactory<GameTime, GameInterval>> _timeFactoryMock;
+            private readonly Mock<IEngine<GameTime>> _engineMock;
+            private Nourishment<GameTime, GameInterval> _nourishment;
+
+            public TheOnNextNourishmentChangedMethod()
+            {
+                _configurationProviderMock = new Mock<IOptions<NourishmentConfiguration<GameInterval>>>();
+                _timeFactoryMock = new Mock<ITimeFactory<GameTime, GameInterval>>();
+                _engineMock = new Mock<IEngine<GameTime>>();
+            }
+
+            // TODO: work out how we want to do this, resubscribing on a sliding scale, etc
         }
     }
 }
