@@ -89,6 +89,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="EnergyTests.cs" />
     <Compile Include="Fake\Event.cs" />
     <Compile Include="Fake\GameInterval.cs" />
     <Compile Include="Fake\GameTime.cs" />

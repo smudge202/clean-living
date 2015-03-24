@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Energy.cs" />
+    <Compile Include="EnergyConfiguration.cs" />
     <Compile Include="Engines\IGregorianEngine.cs" />
     <Compile Include="Events\ConsumedFood.cs" />
     <Compile Include="Events\HydrationDiminished.cs" />
