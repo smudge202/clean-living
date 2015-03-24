@@ -7,7 +7,7 @@ using System.Configuration;
 
 namespace CleanLiving.Models
 {
-    public class Energy<TTime, TInterval> : IGameTimeObserver<EnergyDiminished, TTime>
+    public class Energy<TTime, TInterval> : IGameTimeObserver<EnergyDiminished, TTime>, IObserver<NourishmentChanged>
     {
         private readonly EnergyConfiguration<TInterval> _configuration;
         private readonly ITimeFactory<TTime, TInterval> _timeFactory;
@@ -45,6 +45,12 @@ namespace CleanLiving.Models
 
             _engine.Publish(new EnergyChanged { Energy = _energy });
             _engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
+        }
+
+        public void OnNext(NourishmentChanged value)
+        {
+            // TODO: work out how we want to do this, resubscribing on a sliding scale, etc
+            throw new NotImplementedException();
         }
 
         public void OnCompleted()

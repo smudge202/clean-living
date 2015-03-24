@@ -131,5 +131,22 @@ namespace CleanLiving.Models.Tests
                 _engineMock.Verify(x => x.Subscribe(_energy, It.IsAny<EnergyDiminished>(), It.IsAny<GameTime>()), Times.Exactly(2));
             }
         }
+
+        public class TheOnNextNourishmentChangedMethod
+        {
+            private readonly Mock<IOptions<NourishmentConfiguration<GameInterval>>> _configurationProviderMock;
+            private readonly Mock<ITimeFactory<GameTime, GameInterval>> _timeFactoryMock;
+            private readonly Mock<IEngine<GameTime>> _engineMock;
+            private Nourishment<GameTime, GameInterval> _nourishment;
+
+            public TheOnNextNourishmentChangedMethod()
+            {
+                _configurationProviderMock = new Mock<IOptions<NourishmentConfiguration<GameInterval>>>();
+                _timeFactoryMock = new Mock<ITimeFactory<GameTime, GameInterval>>();
+                _engineMock = new Mock<IEngine<GameTime>>();
+            }
+
+            // TODO: work out how we want to do this, resubscribing on a sliding scale, etc
+        }
     }
 }
