@@ -89,6 +89,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ClockTests.cs" />
+    <Compile Include="EventRecorderTests.cs" />
     <Compile Include="Fake\Clock.cs" />
     <Compile Include="Fake\GameTime.cs" />
     <Compile Include="Fake\Request.cs" />
