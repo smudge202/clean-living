@@ -56,6 +56,8 @@
     <Compile Include="EnergyConfiguration.cs" />
     <Compile Include="Engines\IGregorianEngine.cs" />
     <Compile Include="Events\ConsumedFood.cs" />
+    <Compile Include="Events\EnergyChanged.cs" />
+    <Compile Include="Events\EnergyDiminished.cs" />
     <Compile Include="Events\HydrationDiminished.cs" />
     <Compile Include="Events\NourishmentChanged.cs" />
     <Compile Include="Events\NourishmentDiminished.cs" />
