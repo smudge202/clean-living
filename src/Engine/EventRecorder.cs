@@ -2,13 +2,13 @@
 
 namespace CleanLiving.Engine
 {
-    internal sealed class EventRecorder : IObserver<IMessage>
+    internal sealed class EventRecorder<TSerialized> : IObserver<IMessage>
     {
         private readonly IEngine _engine;
-        private readonly ISerializeEvents _serialize;
+        private readonly ISerializeEvents<TSerialized> _serialize;
         private readonly IPersistEvents _persist;
 
-        public EventRecorder(IEngine engine, ISerializeEvents serialize, IPersistEvents persist)
+        public EventRecorder(IEngine engine, ISerializeEvents<TSerialized> serialize, IPersistEvents persist)
         {
             if (engine == null) throw new ArgumentNullException(nameof(engine));
             if (serialize == null) throw new ArgumentNullException(nameof(serialize));
@@ -20,9 +20,9 @@ namespace CleanLiving.Engine
             _engine.Subscribe(this);
         }
 
-        public void OnNext(IMessage value)
+        public void OnNext(IMessage message)
         {
-            throw new NotImplementedException();
+			_serialize.Serialize(message);            
         }
 
         public void OnError(Exception error)
