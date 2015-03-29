@@ -1,11 +1,14 @@
 ﻿using System;
+using Xunit.Sdk;
 
 namespace CleanLiving.TestHelpers
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [XunitTestCaseDiscoverer("CleanLiving.TestHelpers.CleanLivingDiscoverer", "CleanLiving.TestHelpers")]
     public class UnitTestAttribute : Xunit.FactAttribute { }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [XunitTestCaseDiscoverer("CleanLiving.TestHelpers.CleanLivingDiscoverer", "CleanLiving.TestHelpers")]
     public class ComponentTestAttribute : Xunit.FactAttribute
     {
         public ComponentTestAttribute()
@@ -17,6 +20,7 @@ namespace CleanLiving.TestHelpers
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [XunitTestCaseDiscoverer("CleanLiving.TestHelpers.CleanLivingDiscoverer", "CleanLiving.TestHelpers")]
     public class IntegrationTestAttribute : Xunit.FactAttribute
     {
         public IntegrationTestAttribute(IntegrationTestJustification justification)
