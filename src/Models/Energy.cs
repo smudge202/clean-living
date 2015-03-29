@@ -14,7 +14,9 @@ namespace CleanLiving.Models
         private readonly IEngine<TTime> _engine;
         private readonly IProvideEnergyIncreaseFrequency<TInterval> _frequencyProvider;
         private IDisposable _energyDiminishedSubscription;
+        private IDisposable _energyIncreasedSubscription;
         private decimal _energy;
+        private TInterval _energyIncreaseFrequency;
 
         public Energy(IOptions<EnergyConfiguration<TInterval>> configurationProvider, ITimeFactory<TTime, TInterval> timeFactory, IEngine<TTime> engine, IProvideEnergyIncreaseFrequency<TInterval> frequencyProvider)
         {
@@ -64,15 +66,14 @@ namespace CleanLiving.Models
             increaseEnergy(_configuration.EnergyIncreaseValue);
 
             _engine.Publish(new EnergyChanged { Energy = _energy });
+            _energyDiminishedSubscription = _engine.Subscribe(this, new EnergyIncreased(), _timeFactory.FromNow(_energyIncreaseFrequency));
         }
 
         public void OnNext(NourishmentChanged value)
         {
-            var interval = _frequencyProvider.GetFrequency(value.Nourishment);
+            _energyIncreaseFrequency = _frequencyProvider.GetFrequency(value.Nourishment);
 
-            var time = _timeFactory.FromNow(interval);
-
-            _engine.Subscribe(this, new EnergyIncreased(), time);
+            _energyIncreasedSubscription = _engine.Subscribe(this, new EnergyIncreased(), _timeFactory.FromNow(_energyIncreaseFrequency));
         }
 
         public void OnCompleted()

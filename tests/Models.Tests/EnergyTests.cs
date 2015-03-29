@@ -201,16 +201,26 @@ namespace CleanLiving.Models.Tests
                 _frequencyProviderMock = new Mock<IProvideEnergyIncreaseFrequency<GameInterval>>();
 
                 _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
-
-                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
             }
 
             [UnitTest]
             public void WhenInvokedThenPublishesEnergyChanged()
             {
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
+
                 _energy.OnNext(new EnergyIncreased(), new GameTime());
 
                 _engineMock.Verify(x => x.Publish(It.IsAny<EnergyChanged>()), Times.Once);
+            }
+
+            [UnitTest]
+            public void WhenInvokedThenResubscribesToEngineForEnergyIncreased()
+            {
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
+
+                _energy.OnNext(new EnergyIncreased(), new GameTime());
+
+                _engineMock.Verify(x => x.Subscribe(_energy, It.IsAny<EnergyIncreased>(), It.IsAny<GameTime>()), Times.Once);
             }
         }
     }
