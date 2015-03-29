@@ -54,7 +54,6 @@
   <ItemGroup>
     <Compile Include="Clock.cs" />
     <Compile Include="ClockSubscription.cs" />
-    <Compile Include="EventRecorder.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="GameMessageSubscription.cs" />
     <Compile Include="EngineTime.cs" />
@@ -68,6 +67,7 @@
     <Compile Include="IEvent.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="IPersistEvents.cs" />
+    <Compile Include="IRecordEvents.cs" />
     <Compile Include="IRequest.cs" />
     <Compile Include="IScheduler.cs" />
     <Compile Include="IGameTimeObserver.cs" />

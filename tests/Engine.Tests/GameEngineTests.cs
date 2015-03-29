@@ -15,29 +15,36 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenConfigNotProvidedThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(null, new Mock<ITranslateTime<Fake.GameTime>>().Object, new Mock<IClock>().Object);
+                Action act = () => new GameEngine<Fake.GameTime>(null, new Mock<ITranslateTime<Fake.GameTime>>().Object, new Mock<IClock>().Object, new Mock<IRecordEvents>().Object);
                 act.ShouldThrow<ArgumentNullException>();
             }
 
             [UnitTest]
             public void WhenTranslatorNotProvidedThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(new Mock<IOptions<TimeOptions<Fake.GameTime>>>().Object, null, new Mock<IClock>().Object);
+                Action act = () => new GameEngine<Fake.GameTime>(new Mock<IOptions<TimeOptions<Fake.GameTime>>>().Object, null, new Mock<IClock>().Object, new Mock<IRecordEvents>().Object);
                 act.ShouldThrow<ArgumentNullException>();
             }
 
             [UnitTest]
             public void WhenClockNotProvidedThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(new Mock<IOptions<TimeOptions<Fake.GameTime>>>().Object, new Mock<ITranslateTime<Fake.GameTime>>().Object, null);
+                Action act = () => new GameEngine<Fake.GameTime>(new Mock<IOptions<TimeOptions<Fake.GameTime>>>().Object, new Mock<ITranslateTime<Fake.GameTime>>().Object, null, new Mock<IRecordEvents>().Object);
                 act.ShouldThrow<ArgumentNullException>();
             }
+
+			[UnitTest]
+			public void WhenRecorderNotProvidedThenThrowsException()
+			{
+				Action act = () => new GameEngine<Fake.GameTime>(new Mock<IOptions<TimeOptions<Fake.GameTime>>>().Object, new Mock<ITranslateTime<Fake.GameTime>>().Object, new Mock<IClock>().Object, null);
+				act.ShouldThrow<ArgumentNullException>();
+			}
 
             [UnitTest]
             public void WhenConfigDoesNotProvideOptionsThenThrowsException()
             {
                 var config = new Mock<IOptions<TimeOptions<Fake.GameTime>>>();
-                Action act = () => new GameEngine<Fake.GameTime>(config.Object, new Mock<ITranslateTime<Fake.GameTime>>().Object, new Mock<IClock>().Object);
+                Action act = () => new GameEngine<Fake.GameTime>(config.Object, new Mock<ITranslateTime<Fake.GameTime>>().Object, new Mock<IClock>().Object, new Mock<IRecordEvents>().Object);
                 act.ShouldThrow<ArgumentException>();
             }
         }
@@ -47,7 +54,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeWithoutObserverThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder)
                     .Subscribe(null, new Fake.Event(), new Fake.GameTime());
                 act.ShouldThrow<ArgumentNullException>();
             }
@@ -55,7 +62,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeWithoutMessageThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder)
                     .Subscribe(DefaultTimeObserver, null, new Fake.GameTime());
                 act.ShouldThrow<ArgumentNullException>();
             }
@@ -63,7 +70,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeWithoutGameTimeThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder)
                     .Subscribe(DefaultTimeObserver, new Fake.Event(), null);
                 act.ShouldThrow<ArgumentNullException>();
             }
@@ -74,7 +81,7 @@ namespace CleanLiving.Engine.Tests
                 var clock = new Mock<IClock>();
                 clock.Setup(m => m.Subscribe(It.IsAny<IEngineTimeObserver<Fake.Event>>(), It.IsAny<Fake.Event>(), It.IsAny<EngineTime>()))
                     .Returns(new Mock<IClockSubscription>().Object);
-                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock.Object)
+                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock.Object, DefaultEventRecorder)
                     .Subscribe(DefaultTimeObserver, new Fake.Event(), new Fake.GameTime())
                     .Should().NotBeNull();
             }
@@ -86,7 +93,7 @@ namespace CleanLiving.Engine.Tests
                 var translator = new Mock<ITranslateTime<Fake.GameTime>>();
                 translator.Setup(m => m.ToEngineTime(time)).Returns(EngineTime.Now);
 
-                new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, DefaultClock)
+                new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, DefaultClock, DefaultEventRecorder)
                     .Subscribe(DefaultTimeObserver, new Fake.Event(), time);
 
                 translator.Verify(m => m.ToEngineTime(time), Times.Once);
@@ -99,7 +106,7 @@ namespace CleanLiving.Engine.Tests
                 var time = EngineTime.Now;
                 var translator = new Mock<ITranslateTime<Fake.GameTime>>();
                 translator.Setup(m => m.ToEngineTime(It.IsAny<Fake.GameTime>())).Returns(time);
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock.Object);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock.Object, DefaultEventRecorder);
                 var message = new Fake.Event();
 
                 engine.Subscribe(DefaultTimeObserver, message, new Fake.GameTime());
@@ -116,7 +123,7 @@ namespace CleanLiving.Engine.Tests
                 translator.Setup(m => m.ToGameTime(time)).Returns(new Fake.GameTime());
                 var message = new Fake.Event();
 
-                new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock)
+                new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock, DefaultEventRecorder)
                     .Subscribe(DefaultTimeObserver, message, new Fake.GameTime());
                 clock.Publish(message, time);
 
@@ -130,7 +137,7 @@ namespace CleanLiving.Engine.Tests
                 var subscriber = new Mock<IGameTimeObserver<Fake.Event, Fake.GameTime>>();
                 var message = new Fake.Event();
 
-                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock)
+                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock, DefaultEventRecorder)
                     .Subscribe(subscriber.Object, message, new Fake.GameTime());
                 clock.Publish(message, EngineTime.Now);
 
@@ -146,7 +153,7 @@ namespace CleanLiving.Engine.Tests
                 var translator = new Mock<ITranslateTime<Fake.GameTime>>();
                 translator.Setup(m => m.ToGameTime(It.IsAny<EngineTime>())).Returns(time);
 
-                new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock)
+                new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock, DefaultEventRecorder)
                     .Subscribe(subscriber.Object, new Fake.Event(), time);
                 clock.Publish(new Fake.Event(), EngineTime.Now);
 
@@ -163,7 +170,7 @@ namespace CleanLiving.Engine.Tests
                 translator.Setup(m => m.ToGameTime(It.IsAny<EngineTime>())).Returns(time);
                 clock.SubscribeReturns(subscription.Object);
 
-                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock)
+                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock, DefaultEventRecorder)
                     .Subscribe(DefaultTimeObserver, new Fake.Event(), time);
                 clock.Publish(new Fake.Event(), EngineTime.Now);
 
@@ -187,7 +194,7 @@ namespace CleanLiving.Engine.Tests
                 foreach (var testCase in testCases)
                     translator.Setup(m => m.ToGameTime(testCase.EngineTime)).Returns(testCase.GameTime);
 
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, translator.Object, clock, DefaultEventRecorder);
                 foreach (var testCase in testCases)
                     engine.Subscribe(testCase.Subscriber.Object, new Fake.Event(), testCase.GameTime);
 
@@ -205,7 +212,7 @@ namespace CleanLiving.Engine.Tests
                 var clockSubscription = new Mock<IClockSubscription>();
                 clock.Setup(m => m.Subscribe(It.IsAny<IEngineTimeObserver<IEvent>>(), It.IsAny<IEvent>(), It.IsAny<EngineTime>()))
                     .Returns(clockSubscription.Object);
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock.Object);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, clock.Object, DefaultEventRecorder);
 
                 using (engine.Subscribe(new Mock<IGameTimeObserver<Fake.Event, Fake.GameTime>>().Object, new Fake.Event(), new Fake.GameTime())) { }
 
@@ -218,7 +225,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeWithoutObserverThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder)
                     .Subscribe<IEvent>(null);
                 act.ShouldThrow<ArgumentNullException>();
             }
@@ -226,7 +233,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeForEventThenReceivesSubscription()
             {
-                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder)
                     .Subscribe(new Mock<IObserver<IEvent>>().Object)
                     .Should().NotBeNull();
             }
@@ -234,7 +241,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenEventMatchingSubscriptionIsRaisedThenNotifiesSubscriber()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 var observer = new Mock<IObserver<Fake.Event>>();
                 engine.Subscribe(observer.Object);
                 var message = new Fake.Event();
@@ -247,7 +254,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscriptionIsDisposedThenShouldNotNotifyObserver()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 var observer = new Mock<IObserver<Fake.Event>>();
                 using (var subscription = engine.Subscribe(observer.Object)) { }
 
@@ -259,7 +266,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscriptionForEventDoesNotExistThenDoesNotThrowException()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 Action act = () => engine.Publish(new Fake.Event());
                 act.ShouldNotThrow<Exception>();
             }
@@ -270,7 +277,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeWithoutObserverThenThrowsException()
             {
-                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock)
+                Action act = () => new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder)
                     .Subscribe<IRequest>(null);
                 act.ShouldThrow<ArgumentNullException>();
             }
@@ -278,7 +285,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribeForHandlerRequestThenThrowsException()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 Action act = () => engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object);
                 act.ShouldNotThrow<Exception>();
                 act.ShouldThrow<MultipleRequestHandlersException>();
@@ -287,7 +294,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenRequestPublishedMatchingSubscriptionThenPassesRequestToHandler()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 var observer = new Mock<IObserver<Fake.Request>>();
                 var request = new Fake.Request();
                 using (engine.Subscribe(observer.Object))
@@ -300,7 +307,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscriptionIsDisposedThenObserverIsNotNotified()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 var observer = new Mock<IObserver<Fake.Request>>();
                 var request = new Fake.Request();
                 using (engine.Subscribe(observer.Object)) { }
@@ -311,7 +318,7 @@ namespace CleanLiving.Engine.Tests
             [UnitTest]
             public void WhenSubscribingForRequestTypeThatPreviouslyHadSubscriptionDisposedThenDoesNotThrowException()
             {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock);
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 using (engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object)) { };
                 Action act = () => engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object);
                 act.ShouldNotThrow<Exception>();
@@ -351,5 +358,13 @@ namespace CleanLiving.Engine.Tests
                 return new Mock<IGameTimeObserver<Fake.Event, Fake.GameTime>>().Object;
             }
         }
+
+		private static IRecordEvents DefaultEventRecorder
+		{
+			get
+			{
+				return new Mock<IRecordEvents>().Object;
+            }
+		}
     }
 }

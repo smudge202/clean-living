@@ -15,11 +15,12 @@ namespace CleanLiving.Engine
 
         private GameTimeSubscriptionManager<TTime> _timeSubscriptions;
 
-        public GameEngine(IOptions<TimeOptions<TTime>> config, ITranslateTime<TTime> timeTranslator, IClock clock)
+        public GameEngine(IOptions<TimeOptions<TTime>> config, ITranslateTime<TTime> timeTranslator, IClock clock, IRecordEvents recorder)
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
             if (timeTranslator == null) throw new ArgumentNullException(nameof(timeTranslator));
             if (clock == null) throw new ArgumentNullException(nameof(clock));
+			if (recorder == null) throw new ArgumentNullException(nameof(recorder));
             if (config.Options == null) throw new ArgumentException(nameof(config.Options));
             _clock = clock;
             _translator = timeTranslator;
