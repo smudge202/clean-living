@@ -58,10 +58,12 @@
     <Compile Include="Events\ConsumedFood.cs" />
     <Compile Include="Events\EnergyChanged.cs" />
     <Compile Include="Events\EnergyDiminished.cs" />
+    <Compile Include="Events\EnergyIncreased.cs" />
     <Compile Include="Events\HydrationDiminished.cs" />
     <Compile Include="Events\NourishmentChanged.cs" />
     <Compile Include="Events\NourishmentDiminished.cs" />
     <Compile Include="Hydration.cs" />
+    <Compile Include="IProvideEnergyIncreaseFrequency.cs" />
     <Compile Include="Nourishment.cs" />
     <Compile Include="NourishmentConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

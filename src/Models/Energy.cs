@@ -7,18 +7,21 @@ using System.Configuration;
 
 namespace CleanLiving.Models
 {
-    public class Energy<TTime, TInterval> : IGameTimeObserver<EnergyDiminished, TTime>, IObserver<NourishmentChanged>
+    public class Energy<TTime, TInterval> : IGameTimeObserver<EnergyDiminished, TTime>, IGameTimeObserver<EnergyIncreased, TTime>, IObserver<NourishmentChanged>
     {
         private readonly EnergyConfiguration<TInterval> _configuration;
         private readonly ITimeFactory<TTime, TInterval> _timeFactory;
         private readonly IEngine<TTime> _engine;
+        private readonly IProvideEnergyIncreaseFrequency<TInterval> _frequencyProvider;
+        private IDisposable _energyDiminishedSubscription;
         private decimal _energy;
 
-        public Energy(IOptions<EnergyConfiguration<TInterval>> configurationProvider, ITimeFactory<TTime, TInterval> timeFactory, IEngine<TTime> engine)
+        public Energy(IOptions<EnergyConfiguration<TInterval>> configurationProvider, ITimeFactory<TTime, TInterval> timeFactory, IEngine<TTime> engine, IProvideEnergyIncreaseFrequency<TInterval> frequencyProvider)
         {
             if (configurationProvider == null) throw new ArgumentNullException(nameof(configurationProvider));
             if (timeFactory == null) throw new ArgumentNullException(nameof(timeFactory));
             if (engine == null) throw new ArgumentNullException(nameof(engine));
+            if (frequencyProvider == null) throw new ArgumentNullException(nameof(frequencyProvider));
 
             _configuration = configurationProvider.Options;
 
@@ -26,9 +29,10 @@ namespace CleanLiving.Models
 
             _engine = engine;
             _timeFactory = timeFactory;
+            _frequencyProvider = frequencyProvider;
 
             _energy = _configuration.StartingEnergy;
-            _engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
+            _energyDiminishedSubscription = _engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
         }
 
         private void reduceEnergy(decimal value)
@@ -39,18 +43,36 @@ namespace CleanLiving.Models
                 _energy -= value;
         }
 
+        private void increaseEnergy(decimal value)
+        {
+            if (_energy + value > _configuration.MaximumEnergy)
+                _energy = _configuration.MaximumEnergy;
+            else
+                _energy += value;
+        }
+
         public void OnNext(EnergyDiminished message, TTime time)
         {
             reduceEnergy(_configuration.EnergyDiminishValue);
 
             _engine.Publish(new EnergyChanged { Energy = _energy });
-            _engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
+            _energyDiminishedSubscription =_engine.Subscribe(this, new EnergyDiminished(), _timeFactory.FromNow(_configuration.EnergyDiminishInterval));
+        }
+
+        public void OnNext(EnergyIncreased message, TTime time)
+        {
+            increaseEnergy(_configuration.EnergyIncreaseValue);
+
+            _engine.Publish(new EnergyChanged { Energy = _energy });
         }
 
         public void OnNext(NourishmentChanged value)
         {
-            // TODO: work out how we want to do this, resubscribing on a sliding scale, etc
-            throw new NotImplementedException();
+            var interval = _frequencyProvider.GetFrequency(value.Nourishment);
+
+            var time = _timeFactory.FromNow(interval);
+
+            _engine.Subscribe(this, new EnergyIncreased(), time);
         }
 
         public void OnCompleted()

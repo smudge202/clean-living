@@ -18,18 +18,20 @@ namespace CleanLiving.Models.Tests
             private readonly Mock<IOptions<EnergyConfiguration<GameInterval>>> _configurationProviderMock;
             private readonly Mock<ITimeFactory<GameTime, GameInterval>> _timeFactoryMock;
             private readonly Mock<IEngine<GameTime>> _engineMock;
+            private readonly Mock<IProvideEnergyIncreaseFrequency<GameInterval>> _frequencyProviderMock;
 
             public TheConstructor()
             {
                 _configurationProviderMock = new Mock<IOptions<EnergyConfiguration<GameInterval>>>();
                 _timeFactoryMock = new Mock<ITimeFactory<GameTime, GameInterval>>();
                 _engineMock = new Mock<IEngine<GameTime>>();
+                _frequencyProviderMock = new Mock<IProvideEnergyIncreaseFrequency<GameInterval>>();
             }
 
             [UnitTest]
             public void WhenConfigurationProviderIsNullThenThrowsException()
             {
-                Action act = () => new Energy<GameTime, GameInterval>(null, _timeFactoryMock.Object, _engineMock.Object);
+                Action act = () => new Energy<GameTime, GameInterval>(null, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
                 act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("configurationProvider");
             }
@@ -37,7 +39,7 @@ namespace CleanLiving.Models.Tests
             [UnitTest]
             public void WhenTimeFactoryIsNullThenThrowsException()
             {
-                Action act = () => new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, null, _engineMock.Object);
+                Action act = () => new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, null, _engineMock.Object, _frequencyProviderMock.Object);
 
                 act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("timeFactory");
             }
@@ -45,7 +47,7 @@ namespace CleanLiving.Models.Tests
             [UnitTest]
             public void WhenEngineIsNullThenThrowsException()
             {
-                Action act = () => new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, null);
+                Action act = () => new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, null, _frequencyProviderMock.Object);
 
                 act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("engine");
             }
@@ -53,7 +55,7 @@ namespace CleanLiving.Models.Tests
             [UnitTest]
             public void WhenConfigurationIsNullThenThrowsException()
             {
-                Action act = () => new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+                Action act = () => new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
                 act.ShouldThrow<ConfigurationErrorsException>();
             }
@@ -63,9 +65,9 @@ namespace CleanLiving.Models.Tests
             {
                 _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { EnergyDiminishInterval = new GameInterval() });
 
-                var energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+                var energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
-                _engineMock.Verify(x=>x.Subscribe(energy, It.IsAny<EnergyDiminished>(), It.IsAny<GameTime>()), Times.Once);
+                _engineMock.Verify(x => x.Subscribe(energy, It.IsAny<EnergyDiminished>(), It.IsAny<GameTime>()), Times.Once);
             }
         }
 
@@ -74,6 +76,7 @@ namespace CleanLiving.Models.Tests
             private readonly Mock<IOptions<EnergyConfiguration<GameInterval>>> _configurationProviderMock;
             private readonly Mock<ITimeFactory<GameTime, GameInterval>> _timeFactoryMock;
             private readonly Mock<IEngine<GameTime>> _engineMock;
+            private readonly Mock<IProvideEnergyIncreaseFrequency<GameInterval>> _frequencyProviderMock;
             private Energy<GameTime, GameInterval> _energy;
 
             public TheOnNextEnergyDiminishedMethod()
@@ -81,6 +84,7 @@ namespace CleanLiving.Models.Tests
                 _configurationProviderMock = new Mock<IOptions<EnergyConfiguration<GameInterval>>>();
                 _timeFactoryMock = new Mock<ITimeFactory<GameTime, GameInterval>>();
                 _engineMock = new Mock<IEngine<GameTime>>();
+                _frequencyProviderMock = new Mock<IProvideEnergyIncreaseFrequency<GameInterval>>();
             }
 
             [UnitTest]
@@ -88,7 +92,7 @@ namespace CleanLiving.Models.Tests
             {
                 _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval>());
 
-                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
@@ -100,7 +104,7 @@ namespace CleanLiving.Models.Tests
             {
                 _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.05m, EnergyDiminishValue = 0.1m });
 
-                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
@@ -112,7 +116,7 @@ namespace CleanLiving.Models.Tests
             {
                 _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
 
-                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
@@ -124,7 +128,7 @@ namespace CleanLiving.Models.Tests
             {
                 _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
 
-                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object);
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
 
                 _energy.OnNext(new EnergyDiminished(), new GameTime());
 
@@ -134,19 +138,80 @@ namespace CleanLiving.Models.Tests
 
         public class TheOnNextNourishmentChangedMethod
         {
-            private readonly Mock<IOptions<NourishmentConfiguration<GameInterval>>> _configurationProviderMock;
+            private readonly Mock<IOptions<EnergyConfiguration<GameInterval>>> _configurationProviderMock;
             private readonly Mock<ITimeFactory<GameTime, GameInterval>> _timeFactoryMock;
             private readonly Mock<IEngine<GameTime>> _engineMock;
-            private Nourishment<GameTime, GameInterval> _nourishment;
+            private readonly Mock<IProvideEnergyIncreaseFrequency<GameInterval>> _frequencyProviderMock;
+            private Energy<GameTime, GameInterval> _energy;
 
             public TheOnNextNourishmentChangedMethod()
             {
-                _configurationProviderMock = new Mock<IOptions<NourishmentConfiguration<GameInterval>>>();
+                _configurationProviderMock = new Mock<IOptions<EnergyConfiguration<GameInterval>>>();
                 _timeFactoryMock = new Mock<ITimeFactory<GameTime, GameInterval>>();
                 _engineMock = new Mock<IEngine<GameTime>>();
+                _frequencyProviderMock = new Mock<IProvideEnergyIncreaseFrequency<GameInterval>>();
+
+                _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
             }
 
-            // TODO: work out how we want to do this, resubscribing on a sliding scale, etc
+            [UnitTest]
+            public void WhenInvokedThenInvokesFrequencyProvider()
+            {
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
+
+                _energy.OnNext(new NourishmentChanged { Nourishment = 0.5m });
+
+                _frequencyProviderMock.Verify(x => x.GetFrequency(0.5m), Times.Once);
+            }
+
+            [UnitTest]
+            public void WhenInvokedThenTimeFactoryIsInvoked()
+            {
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
+
+                _energy.OnNext(new NourishmentChanged { Nourishment = 0.5m });
+
+                _timeFactoryMock.Verify(x => x.FromNow(It.IsAny<GameInterval>()), Times.Exactly(2));
+            }
+
+            [UnitTest]
+            public void WhenInvokedThenEngineIsSubcribedTo()
+            {
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
+
+                _energy.OnNext(new NourishmentChanged { Nourishment = 0.5m });
+
+                _engineMock.Verify(x => x.Subscribe(_energy, It.IsAny<EnergyIncreased>(), It.IsAny<GameTime>()), Times.Once());
+            }
+        }
+
+        public class TheOnNextEnergyIncreasedMethod
+        {
+            private readonly Mock<IOptions<EnergyConfiguration<GameInterval>>> _configurationProviderMock;
+            private readonly Mock<ITimeFactory<GameTime, GameInterval>> _timeFactoryMock;
+            private readonly Mock<IEngine<GameTime>> _engineMock;
+            private readonly Mock<IProvideEnergyIncreaseFrequency<GameInterval>> _frequencyProviderMock;
+            private Energy<GameTime, GameInterval> _energy;
+
+            public TheOnNextEnergyIncreasedMethod()
+            {
+                _configurationProviderMock = new Mock<IOptions<EnergyConfiguration<GameInterval>>>();
+                _timeFactoryMock = new Mock<ITimeFactory<GameTime, GameInterval>>();
+                _engineMock = new Mock<IEngine<GameTime>>();
+                _frequencyProviderMock = new Mock<IProvideEnergyIncreaseFrequency<GameInterval>>();
+
+                _configurationProviderMock.Setup(x => x.Options).Returns(new EnergyConfiguration<GameInterval> { MinimumEnergy = 0m, StartingEnergy = 0.5m, EnergyDiminishValue = 0.1m });
+
+                _energy = new Energy<GameTime, GameInterval>(_configurationProviderMock.Object, _timeFactoryMock.Object, _engineMock.Object, _frequencyProviderMock.Object);
+            }
+
+            [UnitTest]
+            public void WhenInvokedThenPublishesEnergyChanged()
+            {
+                _energy.OnNext(new EnergyIncreased(), new GameTime());
+
+                _engineMock.Verify(x => x.Publish(It.IsAny<EnergyChanged>()), Times.Once);
+            }
         }
     }
 }
