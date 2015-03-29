@@ -13,15 +13,15 @@ namespace CleanLiving.Engine.Tests.Fake
             _subscription = subscription;
         }
 
-        public IClockSubscription Subscribe<T>(IEngineTimeObserver<T> observer, T message, EngineTime time) where T : IEvent
+        public IClockSubscription Subscribe<T>(IEngineTimeObserver<T> observer, T message, IEngineTime time) where T : IEvent
         {
             _observer = observer as IEngineTimeObserver<IEvent>;
             return _subscription ?? new Mock<IClockSubscription>().Object;
         }
 
-        internal void Publish<T>(T message, EngineTime time) where T : IEvent
+        internal void Publish<T>(T message, IEngineTime time) where T : IEvent
         {
-            _observer.OnNext(message, time);
+            _observer?.OnNext(message, time);
         }
     }
 }

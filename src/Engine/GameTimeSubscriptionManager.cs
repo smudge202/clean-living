@@ -11,9 +11,11 @@ namespace CleanLiving.Engine
             _translator = translator;
         }
 
-        public void Publish<T>(T message, EngineTime time) where T : IEvent
+        public void Publish<T>(T message, IEngineTime time) where T : IEvent
         {
-            var timeSubscriptions = Data[typeof(T)]
+			var messageType = typeof(T);
+			if (!Data.ContainsKey(messageType)) return;
+            var timeSubscriptions = Data[messageType]
                 .Select(x => x as GameTimeSubscription<T, TTime>);
             foreach (var subscription in timeSubscriptions)
                 subscription.Publish(message, _translator.ToGameTime(time));

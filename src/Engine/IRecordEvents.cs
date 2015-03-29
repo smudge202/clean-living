@@ -2,6 +2,6 @@
 {
 	public interface IRecordEvents
 	{
-		void Record<T>(T message) where T : IMessage;
+		void Record<T>(T message, IEngineTime time) where T : IMessage;
 	}
 }

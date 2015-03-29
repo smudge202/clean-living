@@ -62,7 +62,10 @@
     <Compile Include="GameTimeSubscriptionManager.cs" />
     <Compile Include="IClock.cs" />
     <Compile Include="IClockSubscription.cs" />
+    <Compile Include="ICurrentEngineTime.cs" />
     <Compile Include="IEngine.cs" />
+    <Compile Include="IEngineTime.cs" />
+    <Compile Include="ICurrentEngineTimeFactory.cs" />
     <Compile Include="IEngineTimeObserver.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IMessage.cs" />

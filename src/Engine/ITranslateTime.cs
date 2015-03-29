@@ -2,8 +2,8 @@
 {
     public interface ITranslateTime<TTime>
     {
-        EngineTime ToEngineTime(TTime time);
+        IEngineTime ToEngineTime(TTime time);
 
-        TTime ToGameTime(EngineTime time);
+        TTime ToGameTime(IEngineTime time);
     }
 }

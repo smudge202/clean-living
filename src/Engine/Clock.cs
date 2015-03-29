@@ -16,7 +16,7 @@ namespace CleanLiving.Engine
             _scheduler = scheduler;
         }
 
-        public IClockSubscription Subscribe<T>(IEngineTimeObserver<T> observer, T message, EngineTime time) where T : IEvent
+        public IClockSubscription Subscribe<T>(IEngineTimeObserver<T> observer, T message, IEngineTime time) where T : IEvent
         {
             if (observer == null) throw new ArgumentNullException(nameof(observer));
             if (message == null) throw new ArgumentNullException(nameof(message));

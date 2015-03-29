@@ -10,34 +10,42 @@ namespace CleanLiving.Engine
         private readonly IClock _clock;
         private readonly ITranslateTime<TTime> _translator;
 		private readonly IRecordEvents _recorder;
+		private readonly ICurrentEngineTimeFactory _timeFactory;
 
         private GameMessageSubscriptionManager _eventSubscriptions =
             new GameMessageSubscriptionManager();
 
         private GameTimeSubscriptionManager<TTime> _timeSubscriptions;
 
-        public GameEngine(IOptions<TimeOptions<TTime>> config, ITranslateTime<TTime> timeTranslator, IClock clock, IRecordEvents recorder)
-        {
-            if (config == null) throw new ArgumentNullException(nameof(config));
-            if (timeTranslator == null) throw new ArgumentNullException(nameof(timeTranslator));
-            if (clock == null) throw new ArgumentNullException(nameof(clock));
-			if (recorder == null) throw new ArgumentNullException(nameof(recorder));
-            if (config.Options == null) throw new ArgumentException(nameof(config.Options));
-            _clock = clock;
-            _translator = timeTranslator;
-            _timeSubscriptions = new GameTimeSubscriptionManager<TTime>(timeTranslator);
-			_recorder = recorder;
-        }
 
-        public void OnNext<T>(T message, EngineTime time) where T : IEvent
+		// TODO : Consider splitting this out
+		public GameEngine(IOptions<TimeOptions<TTime>> config, ITranslateTime<TTime> timeTranslator, IClock clock, IRecordEvents recorder, ICurrentEngineTimeFactory timeFactory)
+		{
+			if (config == null) throw new ArgumentNullException(nameof(config));
+			if (timeTranslator == null) throw new ArgumentNullException(nameof(timeTranslator));
+			if (clock == null) throw new ArgumentNullException(nameof(clock));
+			if (recorder == null) throw new ArgumentNullException(nameof(recorder));
+			if (timeFactory == null) throw new ArgumentNullException(nameof(timeFactory));
+			if (config.Options == null) throw new ArgumentException(nameof(config.Options));
+			_clock = clock;
+			_translator = timeTranslator;
+			_timeSubscriptions = new GameTimeSubscriptionManager<TTime>(timeTranslator);
+			_recorder = recorder;
+			_timeFactory = timeFactory;
+		}
+
+        public void OnNext<T>(T message, IEngineTime time) where T : IEvent
         {
+			if (message == null) throw new ArgumentNullException(nameof(message));
+			if (time == null) throw new ArgumentNullException(nameof(time));
+			_recorder.Record(message, time);
             _timeSubscriptions.Publish(message, time);
         }
 
         public void Publish<T>(T message) where T : IMessage
         {
 			if (message == null) throw new ArgumentNullException(nameof(message));
-			_recorder.Record(message);
+			_recorder.Record(message, _timeFactory.Now);
             _eventSubscriptions.Publish(message);
         }
 

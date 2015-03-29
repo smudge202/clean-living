@@ -3,14 +3,16 @@ using System.Diagnostics;
 
 namespace CleanLiving.Engine
 {
-    [DebuggerDisplay("GameTime: {Value}")]
-    public class EngineTime : IEvent
+    [DebuggerDisplay("EngineTime: {Value}")]
+    public class EngineTime : IEngineTime
     {
         private static Stopwatch _timer = Stopwatch.StartNew();
 
-        internal static long Elapsed { get { return _timer.ElapsedTicks; } }
+		// TODO : This is often misinterpreted as ns, not ticks
+		internal static long Elapsed { get { return _timer.ElapsedTicks; } }
 
-        public static CurrentGameTime Now { get; } = new CurrentGameTime();
+		[Obsolete("Cannot isolate static properties, switch to factory")]
+        public static CurrentEngineTime Now { get; } = new CurrentEngineTime();
 
         private EngineTime(long nanosecondsFromNow)
         {
@@ -19,9 +21,9 @@ namespace CleanLiving.Engine
 
         public virtual long Value { get; private set; }
 
-        public class CurrentGameTime : EngineTime
+        public class CurrentEngineTime : EngineTime
         {
-            internal CurrentGameTime() : base(0) { }
+            internal CurrentEngineTime() : base(0) { }
 
             public EngineTime Add(int nanosecondsFromNow)
             {
