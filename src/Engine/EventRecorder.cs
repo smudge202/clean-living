@@ -6,9 +6,9 @@ namespace CleanLiving.Engine
     {
         private readonly IEngine _engine;
         private readonly ISerializeEvents<TSerialized> _serialize;
-        private readonly IPersistEvents _persist;
+        private readonly IPersistEvents<TSerialized> _persist;
 
-        public EventRecorder(IEngine engine, ISerializeEvents<TSerialized> serialize, IPersistEvents persist)
+        public EventRecorder(IEngine engine, ISerializeEvents<TSerialized> serialize, IPersistEvents<TSerialized> persist)
         {
             if (engine == null) throw new ArgumentNullException(nameof(engine));
             if (serialize == null) throw new ArgumentNullException(nameof(serialize));
@@ -22,7 +22,8 @@ namespace CleanLiving.Engine
 
         public void OnNext(IMessage message)
         {
-			_serialize.Serialize(message);            
+			if (message == null) throw new ArgumentNullException(nameof(message));
+			_persist.Persist(_serialize.Serialize(message));
         }
 
         public void OnError(Exception error)
