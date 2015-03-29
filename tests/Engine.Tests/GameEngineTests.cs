@@ -239,6 +239,29 @@ namespace CleanLiving.Engine.Tests
             }
 
             [UnitTest]
+            public void WhenSubscriptionIsDisposedThenShouldNotNotifyObserver()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
+                var observer = new Mock<IObserver<Fake.Event>>();
+                using (var subscription = engine.Subscribe(observer.Object)) { }
+
+                engine.Publish(new Fake.Event());
+
+                observer.Verify(m => m.OnNext(It.IsAny<Fake.Event>()), Times.Never);
+            }
+        }
+
+		public class EventPublished
+		{
+			[UnitTest]
+			public void WhenEventNotProvidedThenThrowsException()
+			{
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
+				Action act = () => engine.Publish((IEvent)null);
+				act.ShouldThrow<ArgumentNullException>();
+			}
+
+            [UnitTest]
             public void WhenEventMatchingSubscriptionIsRaisedThenNotifiesSubscriber()
             {
                 var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
@@ -252,25 +275,38 @@ namespace CleanLiving.Engine.Tests
             }
 
             [UnitTest]
-            public void WhenSubscriptionIsDisposedThenShouldNotNotifyObserver()
-            {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
-                var observer = new Mock<IObserver<Fake.Event>>();
-                using (var subscription = engine.Subscribe(observer.Object)) { }
-
-                engine.Publish(new Fake.Event());
-
-                observer.Verify(m => m.OnNext(It.IsAny<Fake.Event>()), Times.Never);
-            }
-
-            [UnitTest]
             public void WhenSubscriptionForEventDoesNotExistThenDoesNotThrowException()
             {
                 var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
                 Action act = () => engine.Publish(new Fake.Event());
                 act.ShouldNotThrow<Exception>();
-            }
-        }
+			}
+
+			[UnitTest]
+			public void GivenSubscriptionsExistWhenEventPublishedThenRecordsEvent()
+			{
+				var recorder = new Mock<IRecordEvents>();
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, recorder.Object);
+				engine.Subscribe(new Mock<IObserver<Fake.Event>>().Object);
+				var message = new Fake.Event();
+
+				engine.Publish(message);
+
+				recorder.Verify(m => m.Record(message), Times.Once);
+			}
+
+			[UnitTest]
+			public void GivenSubscriptionsDoNotExistWhenEventPublishedThenRecordsEvent()
+			{
+				var recorder = new Mock<IRecordEvents>();
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, recorder.Object);
+				var message = new Fake.Event();
+
+				engine.Publish(message);
+
+				recorder.Verify(m => m.Record(message), Times.Once);
+			}
+		}
 
         public class SubscribeForRequest
         {
@@ -289,19 +325,6 @@ namespace CleanLiving.Engine.Tests
                 Action act = () => engine.Subscribe(new Mock<IObserver<Fake.Request>>().Object);
                 act.ShouldNotThrow<Exception>();
                 act.ShouldThrow<MultipleRequestHandlersException>();
-            }
-
-            [UnitTest]
-            public void WhenRequestPublishedMatchingSubscriptionThenPassesRequestToHandler()
-            {
-                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
-                var observer = new Mock<IObserver<Fake.Request>>();
-                var request = new Fake.Request();
-                using (engine.Subscribe(observer.Object))
-                {
-                    engine.Publish(request);
-                }
-                observer.Verify(m => m.OnNext(request), Times.Once);
             }
 
             [UnitTest]
@@ -324,6 +347,63 @@ namespace CleanLiving.Engine.Tests
                 act.ShouldNotThrow<Exception>();
             }
         }
+
+		public class RequestPublished
+		{
+			[UnitTest]
+			public void WhenEventNotProvidedThenThrowsException()
+			{
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
+				Action act = () => engine.Publish((IRequest)null);
+				act.ShouldThrow<ArgumentNullException>();
+			}
+
+			[UnitTest]
+            public void WhenRequestPublishedMatchingSubscriptionThenPassesRequestToHandler()
+            {
+                var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
+                var observer = new Mock<IObserver<Fake.Request>>();
+                var request = new Fake.Request();
+                using (engine.Subscribe(observer.Object))
+                {
+                    engine.Publish(request);
+                }
+                observer.Verify(m => m.OnNext(request), Times.Once);
+			}
+
+			[UnitTest]
+			public void WhenSubscriptionForEventDoesNotExistThenDoesNotThrowException()
+			{
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, DefaultEventRecorder);
+				Action act = () => engine.Publish(new Fake.Request());
+				act.ShouldNotThrow<Exception>();
+			}
+
+			[UnitTest]
+			public void GivenHandlerExistsWhenRequestPublishedThenRecordsRequest()
+			{
+				var recorder = new Mock<IRecordEvents>();
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, recorder.Object);
+				engine.Subscribe(new Mock<IObserver<Fake.Event>>().Object);
+				var message = new Fake.Request();
+
+				engine.Publish(message);
+
+				recorder.Verify(m => m.Record(message), Times.Once);
+			}
+
+			[UnitTest]
+			public void GivenHandlerDoesNotExistWhenRequestPublishedThenRecordsRequest()
+			{
+				var recorder = new Mock<IRecordEvents>();
+				var engine = new GameEngine<Fake.GameTime>(DefaultConfig, DefaultTranslator, DefaultClock, recorder.Object);
+				var message = new Fake.Request();
+
+				engine.Publish(message);
+
+				recorder.Verify(m => m.Record(message), Times.Once);
+			}
+		}
 
         private static IOptions<TimeOptions<Fake.GameTime>> DefaultConfig
         {

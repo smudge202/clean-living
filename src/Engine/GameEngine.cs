@@ -9,6 +9,7 @@ namespace CleanLiving.Engine
     {
         private readonly IClock _clock;
         private readonly ITranslateTime<TTime> _translator;
+		private readonly IRecordEvents _recorder;
 
         private GameMessageSubscriptionManager _eventSubscriptions =
             new GameMessageSubscriptionManager();
@@ -25,6 +26,7 @@ namespace CleanLiving.Engine
             _clock = clock;
             _translator = timeTranslator;
             _timeSubscriptions = new GameTimeSubscriptionManager<TTime>(timeTranslator);
+			_recorder = recorder;
         }
 
         public void OnNext<T>(T message, EngineTime time) where T : IEvent
@@ -34,6 +36,8 @@ namespace CleanLiving.Engine
 
         public void Publish<T>(T message) where T : IMessage
         {
+			if (message == null) throw new ArgumentNullException(nameof(message));
+			_recorder.Record(message);
             _eventSubscriptions.Publish(message);
         }
 
